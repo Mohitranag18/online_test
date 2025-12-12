@@ -14,10 +14,17 @@ import Submission from './pages/student/Submission';
 import DashboardTeachers from './pages/teacher/DashboardTeachers';
 import AddCourse from './pages/teacher/AddCourse';
 import Courses from './pages/teacher/Courses';
-import ManageCourse from './pages/teacher/ManageCourse';
+import DesignCourse from './pages/teacher/DesignCourse';
+import Enrollment from './pages/teacher/Enrollment';
+import ModuleManagement from './pages/teacher/ModuleManagement';
 import PrivateRoute from './components/auth/PrivateRoute';
+import AddModule from './pages/teacher/AddModule';
 
 import ThemeController from './components/layout/ThemeController';
+import AddQuiz from './pages/teacher/AddQuiz';
+//import AddLesson from './pages/teacher/AddLesson';
+import AddExercise from './pages/teacher/AddExercise';
+import DesignModule from './pages/teacher/DesignModule';
 
 function App() {
   return (
@@ -44,7 +51,23 @@ function App() {
         <Route path="/teacher/dashboard" element={<DashboardTeachers />} />
         <Route path="/teacher/add-course" element={<AddCourse />} />
         <Route path="/teacher/courses" element={<Courses />} />
-        <Route path="/teacher/manage-course" element={<ManageCourse />} />
+        
+        {/* Dynamic Course Management Routes - ADD THESE */}
+        <Route path="/teacher/course/:courseId/enrollment" element={<Enrollment />} />
+        <Route path="/teacher/course/:courseId/modules" element={<ModuleManagement />} />
+        <Route path="/teacher/course/:courseId/design" element={<DesignCourse />} />
+        <Route path="/teacher/course/:courseId/appearance" element={<div className="p-8">Appearance Tab - Coming Soon</div>} />
+        <Route path="/teacher/course/:courseId/privacy" element={<div className="p-8">Privacy Tab - Coming Soon</div>} />
+        <Route path="/teacher/course/:courseId/billing" element={<div className="p-8">Billing Tab - Coming Soon</div>} />
+        <Route path="/teacher/course/:courseId/add-module" element={<AddModule />} />
+        
+        {/* Module-Level Routes */}
+        <Route path="/teacher/course/:courseId/module/:moduleId/add-quiz" element={<AddQuiz />} />
+        {/*<Route path="/teacher/course/:courseId/module/:moduleId/add-lesson" element={<AddLesson />} /> */}
+        <Route path="/teacher/course/:courseId/module/:moduleId/add-exercise" element={<AddExercise />} />
+        <Route path="/teacher/course/:courseId/module/:moduleId/design" element={<DesignModule />} />
+        
+
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

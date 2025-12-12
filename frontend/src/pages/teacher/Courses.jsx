@@ -3,45 +3,14 @@ import { Link } from 'react-router-dom';
 import { FaPlus, FaSearch, FaFilter, FaBook, FaClock, FaUserFriends, FaEllipsisV } from 'react-icons/fa';
 import TeacherSidebar from '../../components/layout/TeacherSidebar';
 import Header from '../../components/layout/Header';
+import CourseActionButtons from './CourseActionButtons';
+import { getAllCourses } from '../../data/mockCourses';
 
 const Courses = () => {
     const [activeTab, setActiveTab] = useState('All Quizzes');
-
-    const courses = [
-        {
-            id: 1,
-            title: 'Introduction to Biology',
-            description: 'Basic concepts of biology for beginners',
-            status: 'Active',
-            questions: 15,
-            time: '20 min',
-            completions: 32,
-            created: 'Created just now',
-            color: 'blue',
-        },
-        {
-            id: 2,
-            title: 'Advanced Mathematics',
-            description: 'Basic concepts of biology for beginners',
-            status: 'Inactive',
-            questions: 15,
-            time: '20 min',
-            completions: 32,
-            created: 'Created just now',
-            color: 'indigo',
-        },
-        {
-            id: 3,
-            title: 'Chemistry Fundamentals',
-            description: 'Basic concepts of biology for beginners',
-            status: 'Draft',
-            questions: 15,
-            time: '20 min',
-            completions: 32,
-            created: 'Created just now',
-            color: 'purple',
-        },
-    ];
+    
+    // Get courses from mock data
+    const courses = getAllCourses();
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -71,23 +40,7 @@ const Courses = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-4 mb-8">
-                        <button className="bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2">
-                            <FaPlus className="w-3 h-3" />
-                            Course Library
-                        </button>
-                        <button className="border border-white/10 px-5 py-2.5 rounded-lg font-semibold hover:bg-white/5 transition flex items-center gap-2">
-                            <FaPlus className="w-3 h-3" />
-                            Create Grading System
-                        </button>
-                        <Link
-                            to="/teacher/add-course"
-                            className="border border-white/10 px-5 py-2.5 rounded-lg font-semibold hover:bg-white/5 transition flex items-center gap-2"
-                        >
-                            <FaPlus className="w-3 h-3" />
-                            Create New Course
-                        </Link>
-                    </div>
+                    <CourseActionButtons activeButton="library" />
 
                     {/* Course Library Section */}
                     <div className="card-strong p-6 min-h-[600px]">
@@ -103,10 +56,11 @@ const Courses = () => {
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${activeTab === tab
+                                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${
+                                            activeTab === tab
                                                 ? 'bg-white/10 text-white'
                                                 : 'text-muted hover:text-white'
-                                            }`}
+                                        }`}
                                     >
                                         {tab}
                                     </button>
@@ -119,7 +73,7 @@ const Courses = () => {
                                     <input
                                         type="text"
                                         placeholder="Search courses..."
-                                        className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/10 rounded-lg text-sm focus:outline-none focus:border-blue-500/50"
+                                        className="w-full pl-10 pr-4 py-2 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg text-sm focus:outline-none focus:border-blue-500/50"
                                     />
                                 </div>
                                 <button className="flex items-center gap-2 px-4 py-2 bg-black/20 border border-white/10 rounded-lg text-sm font-medium hover:bg-white/5 transition">
@@ -178,10 +132,13 @@ const Courses = () => {
 
                                         {/* Actions */}
                                         <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                                            <button className="flex-1 md:flex-none px-4 py-2 border border-white/10 rounded-lg text-sm font-medium hover:bg-white/5 transition">
+                                            <Link
+                                                to={`/teacher/course/${course.id}/modules`}
+                                                className="flex-1 md:flex-none px-4 py-2 border border-[var(--border-color)] rounded-lg text-sm font-medium hover:bg-[var(--input-bg)] transition text-center"
+                                            >
                                                 Manage
-                                            </button>
-                                            <button className="p-2 border border-white/10 rounded-lg hover:bg-white/5 transition text-muted hover:text-white">
+                                            </Link>
+                                            <button className="p-2 border border-[var(--border-color)] rounded-lg hover:bg-[var(--input-bg)] transition text-[var(--text-muted)] hover:text-[var(--text-primary)]">
                                                 <FaEllipsisV className="w-4 h-4" />
                                             </button>
                                         </div>

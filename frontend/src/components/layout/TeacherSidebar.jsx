@@ -13,7 +13,18 @@ const TeacherSidebar = () => {
         { path: '/teacher/questions', label: 'Questions', icon: FaQuestionCircle },
     ];
 
-    const isActive = (path) => location.pathname === path;
+    const isActive = (path) => {
+        // Special handling for courses - match all course-related paths
+        if (path === '/teacher/courses') {
+            return location.pathname === path || 
+                   location.pathname.startsWith('/teacher/course/') ||
+                   location.pathname.startsWith('/teacher/courses') ||
+                   location.pathname === '/teacher/add-course' ||
+                   location.pathname === '/teacher/grading-system';
+        }
+        // For other paths, exact match or starts with
+        return location.pathname === path || location.pathname.startsWith(path + '/');
+    };
 
     return (
         <aside className="w-64 app-sidebar flex flex-col border-r border-white/5 min-h-screen">
@@ -35,10 +46,11 @@ const TeacherSidebar = () => {
                         <Link
                             key={item.path}
                             to={item.path}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${isActive(item.path)
-                                ? 'subtle-accent bg-white/3 text-white'
-                                : 'text-soft hover:bg-white/3'
-                                }`}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                                isActive(item.path)
+                                    ? 'bg-blue-600 text-white'
+                                    : 'text-soft hover:bg-white/3'
+                            }`}
                         >
                             <Icon className="w-5 h-5" />
                             {item.label}
