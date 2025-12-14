@@ -36,48 +36,48 @@ export const useAuthStore = create(
 
       // Actions
       login: async (credentials) => {
-        set({ isLoading: true, error: null });
-        
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+  set({ isLoading: true, error: null });
+  
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 800));
 
-        try {
-          // Find user in mock database
-          const user = MOCK_USERS.find(
-            u => u.username === credentials.username && u.password === credentials.password
-          );
+  try {
+    // Find user in mock database
+    const user = MOCK_USERS.find(
+      u => u.username === credentials.username && u.password === credentials.password
+    );
 
-          if (!user) {
-            throw new Error('Invalid username or password');
-          }
+    if (!user) {
+      throw new Error('Invalid username or password');
+    }
 
-          // Remove password from user object
-          const { password, ...userWithoutPassword } = user;
+    // Remove password from user object
+    const { password, ...userWithoutPassword } = user;
 
-          // Generate mock token
-          const token = `mock_token_${user.id}_${Date.now()}`;
-          
-          // Store token and user data
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-          
-          set({ 
-            user: userWithoutPassword, 
-            token, 
-            isAuthenticated: true, 
-            isLoading: false 
-          });
-          
-          return { success: true };
-        } catch (error) {
-          const errorMessage = error.message || 'Login failed';
-          set({ 
-            isLoading: false, 
-            error: errorMessage 
-          });
-          return { success: false, error: errorMessage };
-        }
-      },
+    // Generate mock token
+    const token = `mock_token_${user.id}_${Date.now()}`;
+    
+    // Store token and user data
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+    
+    set({ 
+      user: userWithoutPassword, 
+      token, 
+      isAuthenticated: true, 
+      isLoading: false 
+    });
+    
+    return { success: true, user: userWithoutPassword }; // Return user object
+  } catch (error) {
+    const errorMessage = error.message || 'Login failed';
+    set({ 
+      isLoading: false, 
+      error: errorMessage 
+    });
+    return { success: false, error: errorMessage };
+  }
+},
 
       register: async (userData) => {
         set({ isLoading: true, error: null });

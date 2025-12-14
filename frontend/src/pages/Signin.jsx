@@ -57,27 +57,32 @@ const Signin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+  if (!validateForm()) {
+    return;
+  }
 
-    clearError();
+  clearError();
 
-    try {
-      const result = await login({
-        username: formData.username,
-        password: formData.password
-      });
+  try {
+    const result = await login({
+      username: formData.username,
+      password: formData.password
+    });
 
-      if (result.success) {
+    if (result.success && result.user) {
+      // Redirect based on user role
+      if (result.user.role === 'teacher') {
+        navigate('/teacher/dashboard');
+      } else {
         navigate('/dashboard');
       }
-    } catch (error) {
-      console.error('Login error:', error);
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+  }
+};
 
   const handleSocialLogin = (provider) => {
     // For now, just show an alert

@@ -109,14 +109,19 @@ const Signup = () => {
     };
 
     try {
-      const result = await register(userData);
+  const result = await register(userData);
 
-      if (result.success) {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
+  if (result.success && result.user) {
+    // Redirect based on user role
+    if (result.user.role === 'teacher') {
+      navigate('/teacher/dashboard');
+    } else {
+      navigate('/dashboard');
     }
+  }
+} catch (error) {
+  console.error('Registration error:', error);
+}
   };
 
   const handleSocialLogin = (provider) => {
