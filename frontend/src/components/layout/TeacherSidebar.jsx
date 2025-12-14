@@ -52,24 +52,22 @@ const TeacherSidebar = () => {
                     ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
             >
-                {/* Logo Section */}
-                <div className="p-4 border-b border-white/6">
-                    <div className="flex items-center justify-between">
-                        <Logo />
-                        <button
-                            onClick={() => setIsMobileOpen(false)}
-                            className="lg:hidden text-muted hover:text-white transition"
-                        >
-                            <FaTimes className="w-5 h-5" />
-                        </button>
-                        <button className="hidden lg:block text-muted hover:text-white transition">
-                            <FaChevronRight className="w-5 h-5" />
-                        </button>
-                    </div>
+                {/* Logo Section - Matching header height */}
+                <div className="h-16 lg:h-20 px-4 sm:px-6 lg:px-8 border-b border-white/6 flex items-center justify-between flex-shrink-0">
+                    <Logo />
+                    <button
+                        onClick={() => setIsMobileOpen(false)}
+                        className="lg:hidden text-muted hover:text-white transition"
+                    >
+                        <FaTimes className="w-5 h-5" />
+                    </button>
+                    <button className="hidden lg:block text-muted hover:text-white transition">
+                        <FaChevronRight className="w-5 h-5" />
+                    </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                <nav className="flex-1 p-4 sm:p-6 lg:p-8 space-y-2 overflow-y-auto">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         return (
@@ -91,7 +89,7 @@ const TeacherSidebar = () => {
                 </nav>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-white/6">
+                <div className="p-4 sm:p-6 lg:p-8 border-t border-white/6 flex-shrink-0">
                     <p className="text-xs text-muted text-center">© 2025 Yaksh</p>
                 </div>
             </aside>

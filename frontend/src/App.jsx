@@ -43,6 +43,9 @@ function App() {
 
         <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/courses" element={<CourseCatalog />} />
+
+
+
           <Route path="/module" element={<CourseModule />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/lesson" element={<Lesson />} />
@@ -54,7 +57,12 @@ function App() {
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<DashboardTeachers />} />
         <Route path="/teacher/add-course" element={<AddCourse />} />
+        <Route path="/teacher/questions" element={<div className="p-8">Questions Page - Coming Soon</div>} />
+        <Route path="/teacher/quizzes" element={<div className="p-8">Quizzes Page - Coming Soon</div>} />
+        
         <Route path="/teacher/courses" element={<Courses />} />
+        <Route path="/teacher/grading-system" element={<div className="p-8">Grading System Page - Coming Soon</div>} />
+      
         
         {/* Dynamic Course Management Routes - ADD THESE */}
         <Route path="/teacher/course/:courseId/enrollment" element={<Enrollment />} />
@@ -64,6 +72,10 @@ function App() {
         <Route path="/teacher/course/:courseId/privacy" element={<div className="p-8">Privacy Tab - Coming Soon</div>} />
         <Route path="/teacher/course/:courseId/billing" element={<div className="p-8">Billing Tab - Coming Soon</div>} />
         <Route path="/teacher/course/:courseId/add-module" element={<AddModule />} />
+        
+
+
+
         
         {/* Module-Level Routes */}
         <Route path="/teacher/course/:courseId/module/:moduleId/add-quiz" element={<AddQuiz />} />

@@ -4,13 +4,24 @@ import { FaPlus, FaSearch, FaFilter, FaBook, FaClock, FaUserFriends, FaEllipsisV
 import TeacherSidebar from '../../components/layout/TeacherSidebar';
 import Header from '../../components/layout/Header';
 import CourseActionButtons from './CourseActionButtons';
-import { getAllCourses } from '../../data/mockCourses';
+import { getAllCourses, getActiveCourses, getDraftCourses } from '../../data/mockCourses';
 
 const Courses = () => {
     const [activeTab, setActiveTab] = useState('All Quizzes');
     
-    // Get courses from mock data
-    const courses = getAllCourses();
+    // Get courses based on active tab
+    const getCourses = () => {
+        switch (activeTab) {
+            case 'Active':
+                return getActiveCourses();
+            case 'Drafts':
+                return getDraftCourses();
+            default:
+                return getAllCourses();
+        }
+    };
+
+    const courses = getCourses();
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -29,12 +40,12 @@ const Courses = () => {
         <div className="flex min-h-screen relative grid-texture">
             <TeacherSidebar />
 
-            <main className="flex-1">
+            <main className="flex-1 w-full lg:w-auto">
                 <Header isAuth />
 
-                <div className="p-8">
+                <div className="p-4 sm:p-6 lg:p-8">
                     {/* Page Header */}
-                    <div className="mb-8">
+                    <div className="mb-6 lg:mb-8">
                         <h1 className="text-2xl font-bold mb-2">Courses</h1>
                         <p className="text-sm muted">Create, manage and analyze your courses</p>
                     </div>
@@ -43,23 +54,23 @@ const Courses = () => {
                     <CourseActionButtons activeButton="library" />
 
                     {/* Course Library Section */}
-                    <div className="card-strong p-6 min-h-[600px]">
-                        <div className="mb-6">
-                            <h2 className="text-xl font-bold mb-1">Course Library</h2>
-                            <p className="text-sm muted">Browse and manage all your courses</p>
+                    <div className="card-strong p-4 sm:p-5 lg:p-6 min-h-[600px]">
+                        <div className="mb-4 sm:mb-6">
+                            <h2 className="text-lg sm:text-xl font-bold mb-1">Course Library</h2>
+                            <p className="text-xs sm:text-sm muted">Browse and manage all your courses</p>
                         </div>
 
                         {/* Filters and Search */}
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                            <div className="flex bg-black/20 p-1 rounded-lg">
+                        <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 sm:gap-4 mb-6">
+                            <div className="flex bg-black/20 p-1 rounded-lg overflow-x-auto scrollbar-hide">
                                 {['All Quizzes', 'Active', 'Drafts'].map((tab) => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${
+                                        className={`flex-1 sm:flex-initial px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                                             activeTab === tab
-                                                ? 'bg-white/10 text-white'
-                                                : 'text-muted hover:text-white'
+                                                ? 'bg-white/10 text-white shadow-sm'
+                                                : 'text-muted hover:text-white hover:bg-white/5'
                                         }`}
                                     >
                                         {tab}
@@ -67,84 +78,91 @@ const Courses = () => {
                                 ))}
                             </div>
 
-                            <div className="flex gap-3 w-full md:w-auto">
+                            <div className="flex gap-2 sm:gap-3 w-full md:w-auto">
                                 <div className="relative flex-1 md:w-64">
-                                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
+                                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-3.5 h-3.5 transition-colors" />
                                     <input
                                         type="text"
                                         placeholder="Search courses..."
-                                        className="w-full pl-10 pr-4 py-2 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg text-sm focus:outline-none focus:border-blue-500/50"
+                                        className="w-full pl-9 pr-3 sm:pr-4 py-2 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
                                     />
                                 </div>
-                                <button className="flex items-center gap-2 px-4 py-2 bg-black/20 border border-white/10 rounded-lg text-sm font-medium hover:bg-white/5 transition">
+                                <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-black/20 border border-white/10 rounded-lg text-xs sm:text-sm font-medium hover:bg-white/5 transition-all duration-200 whitespace-nowrap">
                                     <FaFilter className="w-3 h-3" />
-                                    All Categories
+                                    <span className="hidden sm:inline">Filter</span>
+                                    <span className="sm:hidden">Filter</span>
                                 </button>
                             </div>
                         </div>
 
                         {/* Course List */}
-                        <div className="space-y-4">
-                            {courses.map((course) => (
-                                <div
-                                    key={course.id}
-                                    className="card p-4 hover:bg-white/[0.02] transition group"
-                                >
-                                    <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                                        {/* Icon */}
-                                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20">
-                                            <FaBook className="w-5 h-5 text-blue-400" />
-                                        </div>
+                        <div className="space-y-3 sm:space-y-4">
+                            {courses.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <p className="text-lg muted">No courses found</p>
+                                </div>
+                            ) : (
+                                courses.map((course) => (
+                                    <div
+                                        key={course.id}
+                                        className="card p-4 sm:p-5 hover:bg-white/[0.02] transition-all duration-200 group"
+                                    >
+                                        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                                            {/* Icon */}
+                                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:border-blue-500/30 transition-all duration-200">
+                                                <FaBook className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+                                            </div>
 
-                                        {/* Content */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h3 className="font-semibold text-lg truncate">
-                                                    {course.title}
-                                                </h3>
-                                                <span
-                                                    className={`text-[10px] px-2 py-0.5 rounded border ${getStatusColor(
-                                                        course.status
-                                                    )} uppercase font-bold tracking-wider`}
+                                            {/* Content */}
+                                            <div className="flex-1 min-w-0 w-full">
+                                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                    <h3 className="font-semibold text-base sm:text-lg line-clamp-1 group-hover:text-blue-400 transition-colors duration-200">
+                                                        {course.title}
+                                                    </h3>
+                                                    <span
+                                                        className={`text-[10px] px-2 py-0.5 rounded border ${getStatusColor(
+                                                            course.status
+                                                        )} uppercase font-bold tracking-wider whitespace-nowrap flex-shrink-0 transition-all duration-200`}
+                                                    >
+                                                        {course.status}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs sm:text-sm muted mb-2 sm:mb-3 line-clamp-2">{course.description}</p>
+
+                                                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-4 text-xs muted">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <FaBook className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                        <span>{course.questions} questions</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <FaClock className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                        <span>{course.time}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <FaUserFriends className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                        <span>{course.completions} completions</span>
+                                                    </div>
+                                                    <div className="hidden sm:block text-white/20">|</div>
+                                                    <div className="col-span-2 sm:col-span-1">{course.created}</div>
+                                                </div>
+                                            </div>
+
+                                            {/* Actions */}
+                                            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto sm:self-start">
+                                                <Link
+                                                    to={`/teacher/course/${course.id}/modules`}
+                                                    className="flex-1 sm:flex-none px-3 sm:px-4 py-2 border border-[var(--border-color)] rounded-lg text-xs sm:text-sm font-medium hover:bg-[var(--input-bg)] active:scale-95 transition-all duration-200 text-center whitespace-nowrap"
                                                 >
-                                                    {course.status}
-                                                </span>
+                                                    Manage
+                                                </Link>
+                                                <button className="p-2 border border-[var(--border-color)] rounded-lg hover:bg-[var(--input-bg)] active:scale-95 transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
+                                                    <FaEllipsisV className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                </button>
                                             </div>
-                                            <p className="text-sm muted mb-3">{course.description}</p>
-
-                                            <div className="flex flex-wrap items-center gap-4 text-xs muted">
-                                                <div className="flex items-center gap-1.5">
-                                                    <FaBook className="w-3 h-3" />
-                                                    {course.questions} questions
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <FaClock className="w-3 h-3" />
-                                                    {course.time}
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <FaUserFriends className="w-3 h-3" />
-                                                    {course.completions} completions
-                                                </div>
-                                                <div className="text-white/20">|</div>
-                                                <div>{course.created}</div>
-                                            </div>
-                                        </div>
-
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                                            <Link
-                                                to={`/teacher/course/${course.id}/modules`}
-                                                className="flex-1 md:flex-none px-4 py-2 border border-[var(--border-color)] rounded-lg text-sm font-medium hover:bg-[var(--input-bg)] transition text-center"
-                                            >
-                                                Manage
-                                            </Link>
-                                            <button className="p-2 border border-[var(--border-color)] rounded-lg hover:bg-[var(--input-bg)] transition text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-                                                <FaEllipsisV className="w-4 h-4" />
-                                            </button>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
