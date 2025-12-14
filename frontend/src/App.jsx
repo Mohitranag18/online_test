@@ -31,60 +31,48 @@ function App() {
     <Router>
       <ThemeController />
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
 
-        {/* Protected Routes
+        {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
-          
-        </Route>
-         */}
-
-        <Route path="/dashboard" element={<DashboardHome />} />
+          {/* Student Routes */}
+          <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/courses" element={<CourseCatalog />} />
-
-
-
           <Route path="/module" element={<CourseModule />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/lesson" element={<Lesson />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/submission" element={<Submission />} />
-        
 
-        {/* Teacher Routes */}
-        <Route path="/teacher/dashboard" element={<DashboardTeachers />} />
-        <Route path="/teacher/add-course" element={<AddCourse />} />
-        <Route path="/teacher/questions" element={<div className="p-8">Questions Page - Coming Soon</div>} />
-        <Route path="/teacher/quizzes" element={<div className="p-8">Quizzes Page - Coming Soon</div>} />
+          {/* Teacher Routes */}
+          <Route path="/teacher/dashboard" element={<DashboardTeachers />} />
+          <Route path="/teacher/add-course" element={<AddCourse />} />
+          <Route path="/teacher/courses" element={<Courses />} />
+          <Route path="/teacher/grading-system" element={<div className="p-8">Grading System Page - Coming Soon</div>} />
+          <Route path="/teacher/quizzes" element={<div className="p-8">Quizzes Page - Coming Soon</div>} />
+          <Route path="/teacher/questions" element={<div className="p-8">Questions Page - Coming Soon</div>} />
         
-        <Route path="/teacher/courses" element={<Courses />} />
-        <Route path="/teacher/grading-system" element={<div className="p-8">Grading System Page - Coming Soon</div>} />
-      
+          {/* Dynamic Course Management Routes */}
+          <Route path="/teacher/course/:courseId/enrollment" element={<Enrollment />} />
+          <Route path="/teacher/course/:courseId/modules" element={<ModuleManagement />} />
+          <Route path="/teacher/course/:courseId/design" element={<DesignCourse />} />
+          <Route path="/teacher/course/:courseId/appearance" element={<div className="p-8">Appearance Tab - Coming Soon</div>} />
+          <Route path="/teacher/course/:courseId/privacy" element={<div className="p-8">Privacy Tab - Coming Soon</div>} />
+          <Route path="/teacher/course/:courseId/billing" element={<div className="p-8">Billing Tab - Coming Soon</div>} />
+          <Route path="/teacher/course/:courseId/add-module" element={<AddModule />} />
         
-        {/* Dynamic Course Management Routes - ADD THESE */}
-        <Route path="/teacher/course/:courseId/enrollment" element={<Enrollment />} />
-        <Route path="/teacher/course/:courseId/modules" element={<ModuleManagement />} />
-        <Route path="/teacher/course/:courseId/design" element={<DesignCourse />} />
-        <Route path="/teacher/course/:courseId/appearance" element={<div className="p-8">Appearance Tab - Coming Soon</div>} />
-        <Route path="/teacher/course/:courseId/privacy" element={<div className="p-8">Privacy Tab - Coming Soon</div>} />
-        <Route path="/teacher/course/:courseId/billing" element={<div className="p-8">Billing Tab - Coming Soon</div>} />
-        <Route path="/teacher/course/:courseId/add-module" element={<AddModule />} />
-        
+          {/* Module-Level Routes */}
+          <Route path="/teacher/course/:courseId/module/:moduleId/add-quiz" element={<AddQuiz />} />
+          {/*<Route path="/teacher/course/:courseId/module/:moduleId/add-lesson" element={<AddLesson />} /> */}
+          <Route path="/teacher/course/:courseId/module/:moduleId/add-exercise" element={<AddExercise />} />
+          <Route path="/teacher/course/:courseId/module/:moduleId/design" element={<DesignModule />} />
+        </Route>
 
-
-
-        
-        {/* Module-Level Routes */}
-        <Route path="/teacher/course/:courseId/module/:moduleId/add-quiz" element={<AddQuiz />} />
-        {/*<Route path="/teacher/course/:courseId/module/:moduleId/add-lesson" element={<AddLesson />} /> */}
-        <Route path="/teacher/course/:courseId/module/:moduleId/add-exercise" element={<AddExercise />} />
-        <Route path="/teacher/course/:courseId/module/:moduleId/design" element={<DesignModule />} />
-        
-
-
+        {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
