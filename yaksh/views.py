@@ -107,6 +107,7 @@ def add_as_moderator(users, group_name=MOD_GROUP_NAME):
             user.profile.save()
 
 
+
 def get_html_text(md_text):
     """Takes markdown text and converts it to html"""
     return markdown.markdown(

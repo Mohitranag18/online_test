@@ -35,9 +35,13 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
 
-        {/* Protected Routes */}
+        {/* Protected Routes
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<DashboardHome />} />
+          
+        </Route>
+         */}
+
+        <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/courses" element={<CourseCatalog />} />
           <Route path="/module" element={<CourseModule />} />
           <Route path="/quiz" element={<Quiz />} />
@@ -45,7 +49,7 @@ function App() {
           <Route path="/insights" element={<Insights />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/submission" element={<Submission />} />
-        </Route>
+        
 
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<DashboardTeachers />} />
