@@ -128,7 +128,7 @@ export const useAuthStore = create(
             isLoading: false 
           });
           
-          return { success: true };
+          return { success: true, user: newUser };
         } catch (error) {
           const errorMessage = error.message || 'Registration failed';
           set({ 
