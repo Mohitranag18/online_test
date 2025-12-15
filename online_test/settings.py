@@ -288,6 +288,12 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 if not DEBUG:
     print("Running in PRODUCTION mode")
     
+    # Remove Celery-related apps from INSTALLED_APPS (not using Celery worker)
+    INSTALLED_APPS = tuple(
+        app for app in INSTALLED_APPS 
+        if app not in ('django_celery_beat', 'django_celery_results')
+    )
+    
     # Security Settings
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
@@ -300,23 +306,21 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     
     # Static Files with WhiteNoise
+    # Convert MIDDLEWARE tuple to list, insert WhiteNoise, convert back to tuple
+    MIDDLEWARE = list(MIDDLEWARE)
     MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    MIDDLEWARE = tuple(MIDDLEWARE)
+    # Use basic WhiteNoise storage (not compressed) to avoid CSS parsing issues
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
     
     # Database Configuration from Render
     DATABASES['default'] = dj_database_url.config(
         default=config('DATABASE_URL'),
         conn_max_age=600,
-        conn_health_checks=True,
     )
     
-    # CORS Configuration for Vercel Frontend
-    CORS_ORIGIN_ALLOW_ALL = False
-    CORS_ALLOWED_ORIGINS = [
-        origin.strip() 
-        for origin in config('CORS_ALLOWED_ORIGINS', default='').split(',')
-        if origin.strip()
-    ]
+    # CORS Configuration - Temporarily allow all origins for debugging
+    CORS_ORIGIN_ALLOW_ALL = True
     CORS_ALLOW_CREDENTIALS = True
     
     # Allowed Hosts
@@ -347,5 +351,4 @@ if not DEBUG:
     
     print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
     print(f"DATABASE: {DATABASES['default']['NAME']}")
-    print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
-
+    print(f"CORS_ORIGIN_ALLOW_ALL: {CORS_ORIGIN_ALLOW_ALL}")
