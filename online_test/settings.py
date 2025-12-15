@@ -351,4 +351,8 @@ if not DEBUG:
     
     print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
     print(f"DATABASE: {DATABASES['default']['NAME']}")
+
+
     print(f"CORS_ORIGIN_ALLOW_ALL: {CORS_ORIGIN_ALLOW_ALL}")
+
+# ============================================================================
