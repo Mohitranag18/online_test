@@ -1,8 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import api from '../api/api';
 
-// Auth store using Zustand
+// Mock users database 
+const MOCK_USERS = [
+  {
+    id: 1,
+    username: 'student',
+    email: 'student@example.com',
+    password: 'student123', 
+    role: 'student',
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+  {
+    id: 2,
+    username: 'teacher',
+    email: 'teacher@example.com',
+    password: 'teacher123',
+    role: 'teacher',
+    firstName: 'Jane',
+    lastName: 'Smith',
+  },
+];
+
+// Auth store using Zustand with backend-less authentication
 export const useAuthStore = create(
   persist(
     (set, get) => ({
@@ -15,53 +36,101 @@ export const useAuthStore = create(
 
       // Actions
       login: async (credentials) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await api.post('api/auth/login/', credentials);
-          const { user, token } = response.data;
-          
-          // Store token and user data
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('user', JSON.stringify(user));
-          
-          set({ 
-            user, 
-            token, 
-            isAuthenticated: true, 
-            isLoading: false 
-          });
-          
-          return { success: true };
-        } catch (error) {
-          const errorMessage = error.response?.data?.error || 'Login failed';
-          set({ 
-            isLoading: false, 
-            error: errorMessage 
-          });
-          return { success: false, error: errorMessage };
-        }
-      },
+  set({ isLoading: true, error: null });
+  
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  try {
+    // Find user in mock database
+    const user = MOCK_USERS.find(
+      u => u.username === credentials.username && u.password === credentials.password
+    );
+
+    if (!user) {
+      throw new Error('Invalid username or password');
+    }
+
+    // Remove password from user object
+    const { password, ...userWithoutPassword } = user;
+
+    // Generate mock token
+    const token = `mock_token_${user.id}_${Date.now()}`;
+    
+    // Store token and user data
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+    
+    set({ 
+      user: userWithoutPassword, 
+      token, 
+      isAuthenticated: true, 
+      isLoading: false 
+    });
+    
+    return { success: true, user: userWithoutPassword }; // Return user object
+  } catch (error) {
+    const errorMessage = error.message || 'Login failed';
+    set({ 
+      isLoading: false, 
+      error: errorMessage 
+    });
+    return { success: false, error: errorMessage };
+  }
+},
 
       register: async (userData) => {
         set({ isLoading: true, error: null });
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
         try {
-          const response = await api.post('api/auth/register/', userData);
-          const { user, token } = response.data;
+          // Check if username already exists
+          const existingUser = MOCK_USERS.find(u => u.username === userData.username);
+          if (existingUser) {
+            throw new Error('Username already exists');
+          }
+
+          // Check if email already exists
+          const existingEmail = MOCK_USERS.find(u => u.email === userData.email);
+          if (existingEmail) {
+            throw new Error('Email already exists');
+          }
+
+          // Create new user
+          const newUser = {
+            id: MOCK_USERS.length + 1,
+            username: userData.username,
+            email: userData.email,
+            role: userData.role || 'student',
+            firstName: userData.firstName || '',
+            lastName: userData.lastName || '',
+          };
+
+          // Add to mock database (in real app, this would persist in backend)
+          MOCK_USERS.push({
+            ...newUser,
+            password: userData.password,
+          });
+
+          // Generate mock token
+          const token = `mock_token_${newUser.id}_${Date.now()}`;
           
           // Store token and user data
           localStorage.setItem('authToken', token);
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('user', JSON.stringify(newUser));
           
           set({ 
-            user, 
+            user: newUser, 
             token, 
             isAuthenticated: true, 
             isLoading: false 
           });
           
-          return { success: true };
+          return { success: true, user: newUser };
         } catch (error) {
-          const errorMessage = error.response?.data?.error || 'Registration failed';
+          const errorMessage = error.message || 'Registration failed';
           set({ 
             isLoading: false, 
             error: errorMessage 
@@ -73,38 +142,23 @@ export const useAuthStore = create(
       logout: async () => {
         set({ isLoading: true });
         
-        try {
-          // Call logout API
-          await api.post('api/auth/logout/');
-          
-          // Clear localStorage
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-          
-          // Clear all auth state
-          set({ 
-            user: null, 
-            token: null, 
-            isAuthenticated: false, 
-            isLoading: false,
-            error: null 
-          });
-          
-          return { success: true };
-        } catch (error) {
-          console.error('Logout API error:', error);
-          // Even if API call fails, clear local state
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-          
-          set({ 
-            user: null, 
-            token: null, 
-            isAuthenticated: false, 
-            isLoading: false,
-            error: 'Logout failed but local state cleared'
-          });
-        }
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Clear localStorage
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        
+        // Clear all auth state
+        set({ 
+          user: null, 
+          token: null, 
+          isAuthenticated: false, 
+          isLoading: false,
+          error: null 
+        });
+        
+        return { success: true };
       },
 
       // Initialize auth state from localStorage

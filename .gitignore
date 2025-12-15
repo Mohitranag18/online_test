@@ -44,3 +44,23 @@ data/
 _build/
 
 yaksh_data/yaksh
+
+# ======================
+# Virtual Environments
+# ======================
+venv/
+.env
+.env.*
+
+# ======================
+# Node / Frontend
+# ======================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# ======================
+# Python cache
+# ======================
+__pycache__/
+*.py[cod]
