@@ -15,7 +15,11 @@ import {
   FaCheckDouble,
   FaArrowRight,
   FaClock,
-  FaSync
+  FaSync,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaTimesCircle,
+  FaInfoCircle
 } from 'react-icons/fa';
 import Logo from '../ui/Logo';
 import { useStore } from '../../store/useStore';
@@ -314,7 +318,7 @@ const Header = ({ isAuth = false, isLanding = false }) => {
                   }}
                 >
                   <span className="relative z-10">Get Started</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                  
                 </Link>
               </motion.div>
             </motion.div>
@@ -467,23 +471,40 @@ const Header = ({ isAuth = false, isLanding = false }) => {
                       fetchNotifications();
                     }
                   }}
-                  className="relative p-2.5 rounded-xl bg-gradient-to-br from-white/5 to-white/10 hover:from-white/10 hover:to-white/15 border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-200"
+                  className="relative p-2.5 rounded-xl bg-gradient-to-br from-white/5 to-white/10 hover:from-white/10 hover:to-white/15 border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-200 group"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   aria-label="Notifications"
                 >
-                  <FaBell className="w-5 h-5" />
+                  <motion.div
+                    animate={unreadCount > 0 ? { 
+                      rotate: [0, -10, 10, -10, 10, 0],
+                    } : {}}
+                    transition={{ 
+                      duration: 0.5,
+                      repeat: unreadCount > 0 ? Infinity : 0,
+                      repeatDelay: 3
+                    }}
+                  >
+                    <FaBell className="w-5 h-5" />
+                  </motion.div>
+                  
                   <AnimatePresence>
                     {unreadCount > 0 && (
                       <motion.span 
-                        className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-gradient-to-br from-red-500 to-pink-600 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg shadow-red-500/50"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
+                        className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-gradient-to-br from-red-500 via-pink-600 to-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg"
+                        style={{
+                          boxShadow: '0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(236, 72, 153, 0.4)'
+                        }}
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        exit={{ scale: 0, rotate: 180 }}
                         transition={{ type: "spring", stiffness: 500, damping: 25 }}
                       >
                         <motion.span
-                          animate={{ scale: [1, 1.2, 1] }}
+                          animate={{ 
+                            scale: [1, 1.2, 1],
+                          }}
                           transition={{ duration: 2, repeat: Infinity }}
                         >
                           {unreadCount > 9 ? '9+' : unreadCount}
@@ -499,7 +520,7 @@ const Header = ({ isAuth = false, isLanding = false }) => {
                     <>
                       {/* Mobile Overlay */}
                       <motion.div 
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                        className="fixed inset-0 bg-black/70 backdrop-blur-md z-40 md:hidden"
                         variants={overlayVariants}
                         initial="hidden"
                         animate="visible"
@@ -509,205 +530,351 @@ const Header = ({ isAuth = false, isLanding = false }) => {
                       
                       {/* Dropdown Panel */}
                       <motion.div 
-                        className="fixed md:absolute inset-x-4 top-20 md:inset-x-auto md:right-0 md:top-auto md:mt-3 w-auto md:w-96 max-w-md mx-auto md:mx-0 bg-[var(--surface)] border-2 border-[var(--border-color)] rounded-2xl overflow-hidden z-50"
+                        className="fixed md:absolute inset-x-4 top-20 md:inset-x-auto md:right-0 md:top-auto md:mt-3 w-auto md:w-[420px] max-w-md mx-auto md:mx-0 bg-[var(--surface)] border-2 rounded-2xl overflow-hidden z-50"
                         style={{
-                          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(124, 58, 237, 0.1)'
+                          borderColor: 'var(--border-color)',
+                          boxShadow: '0 25px 70px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(139, 92, 246, 0.2), 0 0 60px rgba(124, 58, 237, 0.15)'
                         }}
                         variants={dropdownVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
                       >
-                        
-                        {/* Header */}
-                        <div className="px-4 py-4 border-b border-[var(--border-color)] bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 backdrop-blur-sm">
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-3">
-                              <motion.div 
-                                className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex-shrink-0 shadow-lg shadow-purple-500/30"
-                                whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                                transition={{ duration: 0.5 }}
-                              >
-                                <FaBell className="w-4 h-4 text-white" />
-                              </motion.div>
-                              <div>
-                                <h3 className="font-bold text-[var(--text-primary)] text-sm">
-                                  Notifications
-                                </h3>
-                                {unreadCount > 0 && (
-                                  <p className="text-xs text-purple-400 font-medium">
-                                    {unreadCount} new
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {notifications.length > 0 && unreadCount > 0 && (
-                                <motion.button
-                                  onClick={handleMarkAllAsRead}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-purple-400 hover:text-purple-300 font-medium transition-all hover:bg-purple-500/10 rounded-lg border border-purple-500/20"
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
+                        {/* Header with gradient border */}
+                        <div className="relative">
+                          <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+                          
+                          <div className="px-4 py-4 border-b border-[var(--border-color)] bg-gradient-to-br from-blue-500/8 via-purple-500/8 to-pink-500/8 backdrop-blur-sm">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-3">
+                                <motion.div 
+                                  className="relative p-2.5 rounded-xl flex-shrink-0 overflow-hidden"
+                                  style={{
+                                    background: 'linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899)',
+                                    boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)'
+                                  }}
+                                  whileHover={{ rotate: [0, -15, 15, -15, 0] }}
+                                  transition={{ duration: 0.6 }}
                                 >
-                                  <FaCheckDouble className="w-3 h-3" />
-                                  <span className="hidden sm:inline">Mark all</span>
+                                  <FaBell className="w-5 h-5 text-white relative z-10" />
+                                  <motion.div
+                                    className="absolute inset-0 bg-white"
+                                    animate={{
+                                      opacity: [0, 0.3, 0],
+                                      scale: [0.8, 1.5, 0.8]
+                                    }}
+                                    transition={{
+                                      duration: 2,
+                                      repeat: Infinity,
+                                      ease: "easeInOut"
+                                    }}
+                                  />
+                                </motion.div>
+                                <div>
+                                  <h3 className="font-bold text-[var(--text-primary)] text-base flex items-center gap-2">
+                                    Notifications
+                                    {unreadCount > 0 && (
+                                      <motion.span
+                                        className="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-full"
+                                        animate={{ scale: [1, 1.1, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                      >
+                                        {unreadCount} new
+                                      </motion.span>
+                                    )}
+                                  </h3>
+                                  <p className="text-xs text-[var(--text-secondary)]">
+                                    Stay updated with your activities
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {notifications.length > 0 && unreadCount > 0 && (
+                                  <motion.button
+                                    onClick={handleMarkAllAsRead}
+                                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg transition-all"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15))',
+                                      border: '1.5px solid rgba(139, 92, 246, 0.3)',
+                                      color: 'var(--notif-info-text)'
+                                    }}
+                                    whileHover={{ 
+                                      scale: 1.05,
+                                      boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)'
+                                    }}
+                                    whileTap={{ scale: 0.95 }}
+                                  >
+                                    <FaCheckDouble className="w-3.5 h-3.5" />
+                                    <span className="hidden sm:inline">Clear all</span>
+                                  </motion.button>
+                                )}
+                                <motion.button
+                                  onClick={() => setIsNotificationOpen(false)}
+                                  className="md:hidden p-2 hover:bg-white/5 rounded-lg transition-colors"
+                                  whileHover={{ scale: 1.1, rotate: 90 }}
+                                  whileTap={{ scale: 0.9 }}
+                                >
+                                  <FaTimes className="w-4 h-4 text-[var(--text-secondary)]" />
                                 </motion.button>
-                              )}
-                              <motion.button
-                                onClick={() => setIsNotificationOpen(false)}
-                                className="md:hidden p-1.5 hover:bg-white/5 rounded-lg transition-colors"
-                                whileHover={{ scale: 1.1, rotate: 90 }}
-                                whileTap={{ scale: 0.9 }}
-                              >
-                                <FaTimes className="w-4 h-4 text-[var(--text-secondary)]" />
-                              </motion.button>
+                              </div>
                             </div>
                           </div>
                         </div>
 
                         {/* Notifications List */}
-                        <div className="max-h-[60vh] md:max-h-[28rem] overflow-y-auto custom-scrollbar">
+                        <div className="max-h-[60vh] md:max-h-[32rem] overflow-y-auto custom-scrollbar">
                           {isLoading ? (
                             <div className="px-4 py-12 text-center">
                               <motion.div 
-                                className="inline-block w-10 h-10 border-4 border-purple-500/20 border-t-purple-500 rounded-full mb-3"
+                                className="inline-block w-12 h-12 border-4 rounded-full mb-4"
+                                style={{
+                                  borderColor: 'rgba(139, 92, 246, 0.2)',
+                                  borderTopColor: '#8b5cf6'
+                                }}
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                               />
-                              <p className="text-sm text-[var(--text-secondary)]">Loading notifications...</p>
+                              <p className="text-sm text-[var(--text-secondary)] font-medium">Loading notifications...</p>
                             </div>
                           ) : notifications.length === 0 ? (
                             <motion.div 
-                              className="px-4 py-12 text-center"
+                              className="px-4 py-16 text-center"
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
                             >
-                              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl flex items-center justify-center">
-                                <FaBell className="w-8 h-8 text-[var(--text-secondary)] opacity-40" />
+                              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl flex items-center justify-center border-2 border-purple-500/20">
+                                <FaBell className="w-10 h-10 text-[var(--text-secondary)] opacity-30" />
                               </div>
-                              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">All caught up!</p>
-                              <p className="text-xs text-[var(--text-secondary)]">No new notifications</p>
+                              <h4 className="text-base font-bold text-[var(--text-primary)] mb-2">All caught up!</h4>
+                              <p className="text-sm text-[var(--text-secondary)]">No new notifications at the moment</p>
                             </motion.div>
                           ) : (
                             <div className="divide-y divide-[var(--border-subtle)]">
-                              {notifications.map((notif, index) => (
-                                <motion.div
-                                  key={notif.message_uid}
-                                  custom={index}
-                                  variants={notificationItemVariants}
-                                  initial="hidden"
-                                  animate="visible"
-                                  onClick={() => handleNotificationClick(notif)}
-                                  className={`group relative px-4 py-4 hover:bg-gradient-to-r hover:from-purple-500/5 hover:to-pink-500/5 cursor-pointer transition-all ${
-                                    !notif.read ? 'bg-purple-500/5' : ''
-                                  }`}
-                                  whileHover={{ x: 4 }}
-                                >
-                                  {!notif.read && (
-                                    <motion.div 
-                                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-pink-500"
-                                      layoutId={`unread-${notif.message_uid}`}
-                                    />
-                                  )}
+                              <AnimatePresence mode="popLayout">
+                                {notifications.slice(0, 8).map((notif, index) => {
+                                  // Get notification type styling
+                                  const getTypeStyle = (type) => {
+                                    switch(type) {
+                                      case 'success':
+                                        return {
+                                          icon: FaCheckCircle,
+                                          iconBg: 'bg-green-500/15',
+                                          iconColor: 'text-green-400',
+                                          badgeBg: 'bg-green-500/15',
+                                          badgeBorder: 'border-green-500/30',
+                                          badgeText: 'text-green-400',
+                                          hoverGlow: 'hover:shadow-green-500/20'
+                                        };
+                                      case 'warning':
+                                        return {
+                                          icon: FaExclamationTriangle,
+                                          iconBg: 'bg-amber-500/15',
+                                          iconColor: 'text-amber-400',
+                                          badgeBg: 'bg-amber-500/15',
+                                          badgeBorder: 'border-amber-500/30',
+                                          badgeText: 'text-amber-400',
+                                          hoverGlow: 'hover:shadow-amber-500/20'
+                                        };
+                                      case 'danger':
+                                        return {
+                                          icon: FaTimesCircle,
+                                          iconBg: 'bg-red-500/15',
+                                          iconColor: 'text-red-400',
+                                          badgeBg: 'bg-red-500/15',
+                                          badgeBorder: 'border-red-500/30',
+                                          badgeText: 'text-red-400',
+                                          hoverGlow: 'hover:shadow-red-500/20'
+                                        };
+                                      default:
+                                        return {
+                                          icon: FaInfoCircle,
+                                          iconBg: 'bg-blue-500/15',
+                                          iconColor: 'text-blue-400',
+                                          badgeBg: 'bg-blue-500/15',
+                                          badgeBorder: 'border-blue-500/30',
+                                          badgeText: 'text-blue-400',
+                                          hoverGlow: 'hover:shadow-blue-500/20'
+                                        };
+                                    }
+                                  };
 
-                                  <div className="flex items-start gap-3">
-                                    <motion.div 
-                                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
-                                        notif.message_type === 'success' ? 'bg-green-500/20 text-green-400' :
-                                        notif.message_type === 'warning' ? 'bg-yellow-500/20 text-yellow-400' :
-                                        notif.message_type === 'danger' ? 'bg-red-500/20 text-red-400' :
-                                        'bg-purple-500/20 text-purple-400'
-                                      }`}
-                                      whileHover={{ scale: 1.1, rotate: 5 }}
+                                  const typeStyle = getTypeStyle(notif.message_type);
+                                  const TypeIcon = typeStyle.icon;
+
+                                  return (
+                                    <motion.div
+                                      key={notif.message_uid}
+                                      layout
+                                      custom={index}
+                                      variants={notificationItemVariants}
+                                      initial="hidden"
+                                      animate="visible"
+                                      exit={{ opacity: 0, x: -50, transition: { duration: 0.2 } }}
+                                      onClick={() => handleNotificationClick(notif)}
+                                      className={`
+                                        group relative px-4 py-4 cursor-pointer transition-all duration-200
+                                        ${!notif.read 
+                                          ? 'bg-gradient-to-r from-purple-500/8 to-blue-500/5' 
+                                          : 'hover:bg-[var(--surface-2)]'
+                                        }
+                                        ${typeStyle.hoverGlow} hover:shadow-lg
+                                      `}
+                                      
                                     >
-                                      {notif.sender_name ? (
-                                        <span className="text-sm font-semibold">
-                                          {notif.sender_name.charAt(0).toUpperCase()}
-                                        </span>
-                                      ) : (
-                                        <FaBell className="w-4 h-4" />
-                                      )}
-                                    </motion.div>
-
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-start justify-between gap-2 mb-1">
-                                        <p className="text-sm font-semibold text-[var(--text-primary)] line-clamp-2 group-hover:text-purple-400 transition-colors">
-                                          {notif.summary}
-                                        </p>
-                                        {!notif.read && (
-                                          <motion.button
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              markAsRead(notif.message_uid);
-                                            }}
-                                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-purple-500/20 text-purple-400"
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
-                                            title="Mark as read"
-                                          >
-                                            <FaCheck className="w-3.5 h-3.5" />
-                                          </motion.button>
-                                        )}
-                                      </div>
-
-                                      {notif.description && (
-                                        <div 
-                                          className="text-xs text-[var(--text-secondary)] mb-2 line-clamp-2 leading-relaxed"
-                                          dangerouslySetInnerHTML={{ __html: notif.description }}
+                                      {/* Unread indicator */}
+                                      {!notif.read && (
+                                        <motion.div 
+                                          className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 rounded-r"
+                                          layoutId={`unread-${notif.message_uid}`}
+                                          initial={{ scaleY: 0 }}
+                                          animate={{ scaleY: 1 }}
                                         />
                                       )}
 
-                                      <div className="flex items-center gap-2 flex-wrap">
-                                        {notif.sender_name && (
-                                          <span className="inline-flex items-center gap-1 text-xs text-[var(--text-secondary)] bg-white/5 px-2 py-0.5 rounded-md border border-[var(--border-subtle)]">
-                                            <FaUser className="w-2.5 h-2.5" />
-                                            {notif.sender_name}
-                                          </span>
-                                        )}
-                                        <span className="inline-flex items-center gap-1 text-xs text-[var(--text-secondary)]">
-                                          <FaClock className="w-2.5 h-2.5" />
-                                          {notif.time_since} ago
-                                        </span>
-                                        {notif.message_type && (
-                                          <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md ${
-                                            notif.message_type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                                            notif.message_type === 'warning' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                                            notif.message_type === 'danger' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                                            'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                                          }`}>
-                                            {notif.message_type}
-                                          </span>
-                                        )}
+                                      <div className="flex items-start gap-3">
+                                        {/* Icon/Avatar */}
+                                        <motion.div 
+                                          className={`
+                                            flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center
+                                            ${typeStyle.iconBg} border-2 ${typeStyle.badgeBorder} shadow-lg
+                                          `}
+                                          whileHover={{ 
+                                            scale: 1.1, 
+                                            rotate: [0, -5, 5, -5, 0],
+                                            transition: { duration: 0.5 }
+                                          }}
+                                        >
+                                          {notif.sender_name ? (
+                                            <span className={`text-base font-bold ${typeStyle.iconColor}`}>
+                                              {notif.sender_name.charAt(0).toUpperCase()}
+                                            </span>
+                                          ) : (
+                                            <TypeIcon className={`w-5 h-5 ${typeStyle.iconColor}`} />
+                                          )}
+                                        </motion.div>
+
+                                        {/* Content */}
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-start justify-between gap-2 mb-1.5">
+                                            <h4 className={`
+                                              text-sm font-bold text-[var(--text-primary)] line-clamp-2
+                                              group-hover:${typeStyle.badgeText} transition-colors
+                                            `}>
+                                              {notif.summary}
+                                            </h4>
+                                            {!notif.read && (
+                                              <motion.button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  markAsRead(notif.message_uid);
+                                                }}
+                                                className={`
+                                                  opacity-0 group-hover:opacity-100 p-1.5 rounded-lg
+                                                  ${typeStyle.iconBg} ${typeStyle.iconColor}
+                                                  hover:scale-110 transition-all
+                                                `}
+                                                whileHover={{ scale: 1.2, rotate: 360 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                title="Mark as read"
+                                              >
+                                                <FaCheck className="w-3.5 h-3.5" />
+                                              </motion.button>
+                                            )}
+                                          </div>
+
+                                          {notif.description && (
+                                            <div 
+                                              className="text-xs text-[var(--text-secondary)] mb-2 line-clamp-2 leading-relaxed"
+                                              dangerouslySetInnerHTML={{ __html: notif.description }}
+                                            />
+                                          )}
+
+                                          {/* Meta badges */}
+                                          <div className="flex items-center gap-2 flex-wrap">
+                                            {notif.sender_name && (
+                                              <span className="inline-flex items-center gap-1.5 text-xs bg-[var(--surface-2)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
+                                                <FaUser className="w-3 h-3 text-[var(--text-secondary)]" />
+                                                <span className="text-[var(--text-secondary)] font-medium">{notif.sender_name}</span>
+                                              </span>
+                                            )}
+                                            <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
+                                              <FaClock className="w-3 h-3" />
+                                              {notif.time_since} ago
+                                            </span>
+                                            {notif.message_type && (
+                                              <span className={`
+                                                inline-flex items-center gap-1.5 px-2 py-1 text-xs font-bold rounded-lg border-2
+                                                ${typeStyle.badgeBg} ${typeStyle.badgeBorder} ${typeStyle.badgeText}
+                                              `}>
+                                                <TypeIcon className="w-3 h-3" />
+                                                {notif.message_type}
+                                              </span>
+                                            )}
+                                            {!notif.read && (
+                                              <motion.span 
+                                                className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-bold bg-purple-500/15 text-purple-400 rounded-lg border-2 border-purple-500/30"
+                                                animate={{ opacity: [0.7, 1, 0.7] }}
+                                                transition={{ duration: 2, repeat: Infinity }}
+                                              >
+                                                <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse" />
+                                                New
+                                              </motion.span>
+                                            )}
+                                          </div>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              ))}
+                                    </motion.div>
+                                  );
+                                })}
+                              </AnimatePresence>
                             </div>
                           )}
                         </div>
 
                         {/* Footer */}
                         {notifications.length > 0 && (
-                          <motion.div 
-                            className="px-4 py-3 border-t border-[var(--border-color)] bg-gradient-to-r from-purple-500/5 to-pink-500/5"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                          >
-                            <motion.button 
-                              onClick={() => {
-                                setIsNotificationOpen(false);
-                                navigate('/notifications');
-                              }}
-                              className="w-full py-2 text-sm text-purple-400 hover:text-purple-300 font-medium transition-all hover:bg-purple-500/10 rounded-lg group flex items-center justify-center gap-2"
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
+                          <div className="relative">
+                            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+                            
+                            <motion.div 
+                              className="px-4 py-3 border-t border-[var(--border-color)] bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.3 }}
                             >
-                              <span>View All Notifications</span>
-                              <FaArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                            </motion.button>
-                          </motion.div>
+                              <motion.button 
+                                onClick={() => {
+                                  setIsNotificationOpen(false);
+                                  navigate('/notifications');
+                                }}
+                                className="w-full py-2.5 text-sm font-bold transition-all rounded-xl group flex items-center justify-center gap-2 overflow-hidden relative"
+                                style={{
+                                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15))',
+                                  border: '2px solid rgba(139, 92, 246, 0.3)',
+                                  color: 'var(--notif-info-text)'
+                                }}
+                                whileHover={{ 
+                                  scale: 1.02,
+                                  boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)'
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                <motion.div
+                                  className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/20 to-pink-500/0"
+                                  animate={{
+                                    x: ['-100%', '100%']
+                                  }}
+                                  transition={{
+                                    duration: 2,
+                                    repeat: Infinity,
+                                    ease: "linear"
+                                  }}
+                                />
+                                <span className="relative z-10">View All Notifications</span>
+                                <FaArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform relative z-10" />
+                              </motion.button>
+                            </motion.div>
+                          </div>
                         )}
                       </motion.div>
                     </>

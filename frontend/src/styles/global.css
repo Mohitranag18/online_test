@@ -24,8 +24,8 @@
   --input-bg: rgba(139, 92, 246, 0.04);
   --bg-footer: #000000;
 
-  --grad-1: #7c3aed;  /* slightly adjusted purple */
-  --grad-2: #ec4899;  /* more balanced pink */
+  --grad-1: #48d820;  /* slightly adjusted purple */
+  --grad-2: #b51a1a;  /* more balanced pink */
   --grad-3: #f97316;  /* consistent with Tailwind orange */
 
   --header-bg: rgba(20, 20, 31, 0.90);      /* Slightly lighter & more opaque */
@@ -54,7 +54,74 @@
     0 8px 24px rgba(124, 58, 237, 0.2),
     0 4px 12px rgba(236, 72, 153, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  --logo-glow: 0 0 20px rgba(124, 58, 237, 0.3); 
+  --logo-glow: 0 0 20px rgba(124, 58, 237, 0.3);
+
+  /* Enhanced Notification Color Palette */
+  --notif-info-bg: rgba(59, 130, 246, 0.1);
+  --notif-info-border: rgba(59, 130, 246, 0.3);
+  --notif-info-text: #60a5fa;
+  --notif-info-glow: rgba(59, 130, 246, 0.2);
+  
+  --notif-success-bg: rgba(34, 197, 94, 0.1);
+  --notif-success-border: rgba(34, 197, 94, 0.3);
+  --notif-success-text: #4ade80;
+  --notif-success-glow: rgba(34, 197, 94, 0.2);
+  
+  --notif-warning-bg: rgba(245, 158, 11, 0.1);
+  --notif-warning-border: rgba(245, 158, 11, 0.3);
+  --notif-warning-text: #fbbf24;
+  --notif-warning-glow: rgba(245, 158, 11, 0.2);
+  
+  --notif-danger-bg: rgba(239, 68, 68, 0.1);
+  --notif-danger-border: rgba(239, 68, 68, 0.3);
+  --notif-danger-text: #f87171;
+  --notif-danger-glow: rgba(239, 68, 68, 0.2);
+  
+  --notif-unread-bg: rgba(139, 92, 246, 0.08);
+  --notif-unread-border: rgba(139, 92, 246, 0.3);
+  --notif-unread-accent: #8b5cf6; 
+
+
+
+  /* Profile Page Specific Variables */
+  --profile-avatar-shadow: 
+    0 8px 32px rgba(124, 58, 237, 0.3),
+    0 4px 16px rgba(236, 72, 153, 0.2),
+    0 0 0 4px rgba(139, 92, 246, 0.1);
+  
+  --profile-section-bg: rgba(139, 92, 246, 0.05);
+  --profile-section-border: rgba(139, 92, 246, 0.2);
+  --profile-section-hover-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+  
+  --profile-input-focus-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  
+  /* Profile stat card colors */
+  --profile-stat-blue-bg: rgba(59, 130, 246, 0.1);
+  --profile-stat-blue-border: rgba(59, 130, 246, 0.3);
+  --profile-stat-blue-text: #60a5fa;
+  --profile-stat-blue-glow: rgba(59, 130, 246, 0.2);
+  
+  --profile-stat-emerald-bg: rgba(16, 185, 129, 0.1);
+  --profile-stat-emerald-border: rgba(16, 185, 129, 0.3);
+  --profile-stat-emerald-text: #34d399;
+  --profile-stat-emerald-glow: rgba(16, 185, 129, 0.2);
+  
+  --profile-stat-amber-bg: rgba(245, 158, 11, 0.1);
+  --profile-stat-amber-border: rgba(245, 158, 11, 0.3);
+  --profile-stat-amber-text: #fbbf24;
+  --profile-stat-amber-glow: rgba(245, 158, 11, 0.2);
+  
+  --profile-stat-pink-bg: rgba(236, 72, 153, 0.1);
+  --profile-stat-pink-border: rgba(236, 72, 153, 0.3);
+  --profile-stat-pink-text: #f472b6;
+  --profile-stat-pink-glow: rgba(236, 72, 153, 0.2);
+  
+  --profile-stat-purple-bg: rgba(168, 85, 247, 0.1);
+  --profile-stat-purple-border: rgba(168, 85, 247, 0.3);
+  --profile-stat-purple-text: #c084fc;
+  --profile-stat-purple-glow: rgba(168, 85, 247, 0.2);
+
+    
   
 }
 
@@ -100,7 +167,78 @@
     0 8px 24px rgba(124, 58, 237, 0.2),
     0 4px 12px rgba(236, 72, 153, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  --logo-glow: 0 0 20px rgba(124, 58, 237, 0.3);  
+  --logo-glow: 0 0 20px rgba(124, 58, 237, 0.3); 
+
+
+  /* Light mode notification colors */
+  --notif-info-bg: rgba(59, 130, 246, 0.08);
+  --notif-info-border: rgba(59, 130, 246, 0.2);
+  --notif-info-text: #2563eb;
+  --notif-info-glow: rgba(59, 130, 246, 0.15);
+  
+  --notif-success-bg: rgba(34, 197, 94, 0.08);
+  --notif-success-border: rgba(34, 197, 94, 0.2);
+  --notif-success-text: #16a34a;
+  --notif-success-glow: rgba(34, 197, 94, 0.15);
+  
+  --notif-warning-bg: rgba(245, 158, 11, 0.08);
+  --notif-warning-border: rgba(245, 158, 11, 0.2);
+  --notif-warning-text: #d97706;
+  --notif-warning-glow: rgba(245, 158, 11, 0.15);
+  
+  --notif-danger-bg: rgba(239, 68, 68, 0.08);
+  --notif-danger-border: rgba(239, 68, 68, 0.2);
+  --notif-danger-text: #dc2626;
+  --notif-danger-glow: rgba(239, 68, 68, 0.15);
+  
+  --notif-unread-bg: rgba(139, 92, 246, 0.05);
+  --notif-unread-border: rgba(139, 92, 246, 0.2);
+  --notif-unread-accent: #7c3aed; 
+
+
+  /* Profile Page for Light Mode */
+  --profile-avatar-shadow: 
+    0 8px 32px rgba(124, 58, 237, 0.25),
+    0 4px 16px rgba(236, 72, 153, 0.15),
+    0 0 0 4px rgba(139, 92, 246, 0.08);
+  
+  --profile-section-bg: rgba(139, 92, 246, 0.03);
+  --profile-section-border: rgba(139, 92, 246, 0.15);
+  --profile-section-hover-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+  
+  --profile-input-focus-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
+  
+  /* Profile stat cards for light mode */
+  --profile-stat-blue-bg: rgba(59, 130, 246, 0.08);
+  --profile-stat-blue-border: rgba(59, 130, 246, 0.2);
+  --profile-stat-blue-text: #2563eb;
+  --profile-stat-blue-glow: rgba(59, 130, 246, 0.15);
+  
+  --profile-stat-emerald-bg: rgba(16, 185, 129, 0.08);
+  --profile-stat-emerald-border: rgba(16, 185, 129, 0.2);
+  --profile-stat-emerald-text: #059669;
+  --profile-stat-emerald-glow: rgba(16, 185, 129, 0.15);
+  
+  --profile-stat-amber-bg: rgba(245, 158, 11, 0.08);
+  --profile-stat-amber-border: rgba(245, 158, 11, 0.2);
+  --profile-stat-amber-text: #d97706;
+  --profile-stat-amber-glow: rgba(245, 158, 11, 0.15);
+  
+  --profile-stat-pink-bg: rgba(236, 72, 153, 0.08);
+  --profile-stat-pink-border: rgba(236, 72, 153, 0.2);
+  --profile-stat-pink-text: #db2777;
+  --profile-stat-pink-glow: rgba(236, 72, 153, 0.15);
+  
+  --profile-stat-purple-bg: rgba(168, 85, 247, 0.08);
+  --profile-stat-purple-border: rgba(168, 85, 247, 0.2);
+  --profile-stat-purple-text: #9333ea;
+  --profile-stat-purple-glow: rgba(168, 85, 247, 0.15);
+
+
+  
+
+
+  
 }
 
 
@@ -418,20 +556,155 @@
   }
 
   /* Custom scrollbar for dropdowns */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--surface);
-}
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--grad-1), var(--grad-2));
-  border-radius: 10px;
-}
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--grad-1), var(--grad-2));
+    border-radius: 3px;
+    opacity: 0.6;
+  }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--grad-2), var(--grad-1));
-}
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    opacity: 1;
+    background: linear-gradient(180deg, var(--grad-2), var(--grad-1));
+  }
+
+
+  /* Profile-Specific Component Classes */
+  .profile-avatar-wrapper {
+    position: relative;
+    border-radius: 1.5rem;
+    padding: 0.25rem;
+    box-shadow: var(--profile-avatar-shadow);
+    transition: all 0.3s ease;
+  }
+
+  .profile-avatar-wrapper:hover {
+    transform: scale(1.05) rotate(-2deg);
+  }
+
+  .profile-section-card {
+    background: var(--profile-section-bg);
+    border: 2px solid var(--profile-section-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .profile-section-card:hover {
+    box-shadow: var(--profile-section-hover-shadow);
+    transform: translateY(-2px);
+  }
+
+  .profile-stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .profile-stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .profile-stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .profile-stat-card:hover::before {
+    opacity: 1;
+  }
+
+  .profile-input-enhanced {
+    transition: all 0.3s ease;
+    border: 2px solid var(--border-color);
+  }
+
+  .profile-input-enhanced:focus {
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow: var(--profile-input-focus-shadow);
+  }
+
+  .profile-input-enhanced:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: var(--surface-2) !important;
+  }
+
+  /* Profile completeness progress bar */
+  .profile-progress-bar {
+    position: relative;
+    width: 100%;
+    height: 1rem;
+    background: var(--surface);
+    border-radius: 9999px;
+    border: 2px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-progress-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    animation: progress-shine 2s ease-in-out infinite;
+  }
+
+  @keyframes progress-shine {
+    0% {
+      transform: translateX(-100%);
+    }
+    50%, 100% {
+      transform: translateX(200%);
+    }
+  }
+
+  /* Profile skill badge */
+  .profile-skill-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid;
+  }
+
+  .profile-skill-badge:hover {
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  
+
+
+  
 }

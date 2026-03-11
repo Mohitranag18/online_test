@@ -95,70 +95,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Dashboard Preview */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--text-primary)]">
-              Your Learning<br />
-              <span className="neon-text">Dashboard</span>
-            </h2>
-            <p className="text-[var(--text-muted)] max-w-2xl mx-auto">
-              Track progress, manage courses, and stay motivated on your learning journey
-            </p>
-          </div>
-
-          <div className="rounded-2xl p-8 bg-[var(--surface)] border border-[var(--border-subtle)]">
-            <div className="rounded-xl p-6 card-strong mb-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-[var(--text-primary)]">Active Courses</h3>
-                <span className="text-sm text-[var(--text-muted)]">Your current learning paths</span>
-              </div>
-
-              <div className="space-y-4">
-                {[
-                  { title: 'Python Fundamentals', lessons: '18/25', progress: 75, color: 'indigo' },
-                  { title: 'Java', lessons: '11/25', progress: 43, color: 'purple' },
-                  { title: 'C Programming', lessons: '13/25', progress: 50, color: 'blue' }
-                ].map((course, idx) => (
-                  <div key={idx} className={`rounded-lg p-4 border-l-4 border-${course.color}-400 bg-[var(--input-bg)]`}>
-                    <div className="flex justify-between mb-2">
-                      <div>
-                        <h4 className="font-semibold text-[var(--text-primary)]">{course.title}</h4>
-                        <p className="text-sm text-[var(--text-secondary)]">Lessons: {course.lessons}</p>
-                      </div>
-                      <span className="text-sm text-[var(--text-primary)]">{course.progress}%</span>
-                    </div>
-                    <div className="w-full bg-[var(--border-subtle)] h-2 rounded-full">
-                      <div className={`bg-${course.color}-400 h-2 rounded-full`} style={{ width: `${course.progress}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-xl p-6 card-strong">
-              <h3 className="text-xl font-bold mb-4 text-[var(--text-primary)]">This Month</h3>
-              <div className="grid grid-cols-3 gap-6 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-[var(--text-primary)]">28</div>
-                  <div className="text-sm text-[var(--text-muted)]">Challenges Solved</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-[var(--text-primary)]">12</div>
-                  <div className="text-sm text-[var(--text-muted)]">Lessons Completed</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-[var(--text-primary)]">450</div>
-                  <div className="text-sm text-[var(--text-muted)]">Points Earned</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
       <section className="py-20 cta-bg text-[var(--text-primary)] relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 neon-text">
@@ -170,20 +106,20 @@ const Home = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
-  <Link 
-    to="/signup" 
-    className="w-full sm:w-auto btn-grad text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl font-semibold hover:brightness-110 active:scale-95 transition-all duration-200 text-base sm:text-lg shadow-xl text-center"
-  >
-    Start Learning Now
-  </Link>
+            <Link 
+              to="/signup" 
+              className="w-full sm:w-auto btn-grad text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl font-semibold hover:brightness-110 active:scale-95 transition-all duration-200 text-base sm:text-lg shadow-xl text-center"
+            >
+              Start Learning Now
+            </Link>
 
-  <Link 
-    to="/courses" 
-    className="w-full sm:w-auto border-2 border-[var(--text-primary)] text-[var(--text-primary)] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl font-semibold hover:bg-[var(--text-primary)]/10 active:scale-95 transition-all duration-200 text-base sm:text-lg shadow-lg text-center backdrop-blur-sm"
-  >
-    Explore Courses
-  </Link>
-</div>
+            <Link 
+              to="/courses" 
+              className="w-full sm:w-auto border-2 border-[var(--text-primary)] text-[var(--text-primary)] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl font-semibold hover:bg-[var(--text-primary)]/10 active:scale-95 transition-all duration-200 text-base sm:text-lg shadow-lg text-center backdrop-blur-sm"
+            >
+              Explore Courses
+            </Link>
+          </div>
         </div>
       </section>
 

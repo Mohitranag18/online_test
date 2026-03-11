@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaLinkedin, 
   FaGithub, 
@@ -18,13 +19,105 @@ import {
   FaEdit,
   FaPlus,
   FaTrash,
-  FaChartLine
+  FaChartLine,
+  FaStar,
+  FaTrophy,
+  FaAward,
+  FaFire,
+  FaShieldAlt,
+  FaCode,
+  FaUserGraduate
 } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import StudentSidebar from '../components/layout/Sidebar';
 import TeacherSidebar from '../components/layout/TeacherSidebar';
 import { useAuthStore } from '../store/authStore';
 import { getUserProfile, patchUserProfile, getModeratorStatus } from '../api/api';
+
+// Enhanced animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 14
+    }
+  }
+};
+
+const statCardVariants = {
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 15
+    }
+  },
+  hover: {
+    scale: 1.05,
+    y: -4,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10
+    }
+  }
+};
+
+const avatarVariants = {
+  hover: {
+    scale: 1.05,
+    rotate: [0, -5, 5, -5, 0],
+    transition: {
+      rotate: {
+        duration: 0.5
+      },
+      scale: {
+        duration: 0.2
+      }
+    }
+  }
+};
+
+const skillBadgeVariants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20
+    }
+  },
+  hover: {
+    scale: 1.1,
+    y: -2,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10
+    }
+  }
+};
 
 const Profile = () => {
   const { user, isAuthenticated } = useAuthStore();
@@ -58,7 +151,7 @@ const Profile = () => {
   const [skills, setSkills] = useState(['Data Structures', 'Algorithms', 'SQL', 'React', 'Python', 'JavaScript']);
   const [loading, setLoading] = useState(true);
 
-  // Determine if user is currently in teacher mode (not just has teacher privileges)
+  // Determine if user is currently in teacher mode
   const isTeacher = user?.is_moderator && isModeratorActive;
 
   // Fetch active moderator status on mount
@@ -88,7 +181,6 @@ const Profile = () => {
         const userData = response.user;
         setProfileData(userData);
         
-        // Populate form
         setFormData({
           first_name: userData.first_name || '',
           last_name: userData.last_name || '',
@@ -133,7 +225,6 @@ const Profile = () => {
     setIsSaving(true);
 
     try {
-      // Only send changed fields
       const changedFields = {};
       Object.keys(formData).forEach(key => {
         if (formData[key] !== profileData?.[key]) {
@@ -163,7 +254,6 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
-    // Reset form to original data
     if (profileData) {
       setFormData({
         first_name: profileData.first_name || '',
@@ -215,37 +305,95 @@ const Profile = () => {
 
   const completeness = calculateProfileCompleteness();
 
+  // Get avatar colors based on name
+  const getAvatarGradient = () => {
+    const gradients = [
+      'from-blue-500 via-cyan-500 to-teal-500',
+      'from-purple-500 via-pink-500 to-rose-500',
+      'from-emerald-500 via-green-500 to-teal-500',
+      'from-orange-500 via-amber-500 to-yellow-500',
+      'from-indigo-500 via-purple-500 to-pink-500',
+      'from-red-500 via-rose-500 to-pink-500',
+      'from-teal-500 via-cyan-500 to-blue-500',
+      'from-amber-500 via-orange-500 to-red-500'
+    ];
+    const name = formData.first_name || 'U';
+    const index = name.charCodeAt(0) % gradients.length;
+    return gradients[index];
+  };
+
   if (!isAuthenticated || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
-        <div className="text-center">
-          <div className="text-2xl text-gray-300 mb-4">Please log in to view your profile</div>
-          <Link to="/signin" className="text-indigo-400 hover:text-indigo-300">
-            Go to Login
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-blue-500/5">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className="text-center max-w-md mx-auto px-6"
+        >
+          <motion.div
+            className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl flex items-center justify-center border-2 border-purple-500/30 shadow-2xl shadow-purple-500/20"
+            animate={{ 
+              rotate: [0, 5, -5, 0],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ 
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <FaUser className="w-16 h-16 text-purple-400" />
+          </motion.div>
+          <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Access Denied
+          </h2>
+          <p className="text-[var(--text-secondary)] mb-8 text-lg">
+            Please sign in to view your profile
+          </p>
+          <Link to="/signin">
+            <motion.button
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-xl font-semibold hover:brightness-110 transition-all shadow-lg shadow-purple-500/30 text-white"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Sign In Now
+            </motion.button>
           </Link>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex min-h-screen relative grid-texture">
-        {isTeacher ? (
-          <TeacherSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        ) : (
-          <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        )}
-        <main className="flex-1 lg:ml-64">
-          <Header 
-            onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            isSidebarOpen={isSidebarOpen}
-          />
-          <div className="p-8 flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-              <p className="text-gray-400">Loading profile...</p>
-            </div>
+      <div className="flex min-h-screen">
+        {isTeacher ? <TeacherSidebar /> : <StudentSidebar />}
+        <main className="flex-1">
+          <Header isAuth />
+          <div className="flex items-center justify-center h-[calc(100vh-5rem)]">
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <motion.div className="relative w-20 h-20 mx-auto mb-6">
+                <motion.div
+                  className="absolute inset-0 border-4 border-purple-500/30 border-t-purple-500 rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.div
+                  className="absolute inset-2 border-4 border-pink-500/30 border-b-pink-500 rounded-full"
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <FaUser className="w-6 h-6 text-purple-400" />
+                </div>
+              </motion.div>
+              <p className="text-[var(--text-secondary)] text-lg font-medium">Loading your profile...</p>
+            </motion.div>
           </div>
         </main>
       </div>
@@ -253,687 +401,950 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex min-h-screen relative grid-texture">
-      {/* Sidebar - Conditional based on role */}
-      {isTeacher ? (
-        <TeacherSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      ) : (
-        <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      )}
+    <div className="flex min-h-screen relative">
+      {isTeacher ? <TeacherSidebar /> : <StudentSidebar />}
 
-      {/* Main Content */}
       <main className="flex-1">
         <Header isAuth />
         
-        <div className="p-4 sm:p-6 lg:p-8">
-          {/* Header Section */}
-          <div className="mb-6 lg:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Profile</h1>
-            <p className="text-sm muted">Manage your account information and preferences</p>
-          </div>
-
-          {/* Status Message */}
-          {message.text && (
-            <div className={`mb-6 p-4 rounded-lg border ${
-              message.type === 'success' ? 'bg-green-500/10 border-green-500/50 text-green-400' :
-              message.type === 'error' ? 'bg-red-500/10 border-red-500/50 text-red-400' :
-              'bg-blue-500/10 border-blue-500/50 text-blue-400'
-            }`}>
-              <div className="flex items-center gap-2">
-                {message.type === 'success' ? <FaCheckCircle /> : <FaTimesCircle />}
-                <span>{message.text}</span>
+        <motion.div 
+          className="p-4 sm:p-6 lg:p-8 max-w-[1800px] mx-auto"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          {/* Enhanced Page Header */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                <motion.div 
+                  className="relative p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 border-2 border-purple-500/30 shadow-xl shadow-purple-500/20"
+                  whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.05 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <FaUser className="w-8 h-8 text-purple-400" />
+                </motion.div>
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                    My Profile
+                  </h1>
+                  <p className="text-base text-[var(--text-secondary)] mt-1">
+                    Manage your account information and preferences
+                  </p>
+                </div>
               </div>
             </div>
-          )}
+          </motion.div>
 
-          
-
-          <div className="flex flex-col xl:flex-row gap-4 sm:gap-6 lg:gap-8">
-            {/* Main Card */}
-            <div className="flex-1 card-strong rounded-xl sm:rounded-2xl overflow-hidden">
-              
-              {/* Card Header */}
-              <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[var(--border-color)] gap-3 sm:gap-4">
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                  <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-                    <img
-                      src={`https://ui-avatars.com/api/?name=${formData.first_name}+${formData.last_name}&background=6366f1&color=fff&size=128&bold=true`}
-                      alt="Profile"
-                      className="w-full h-full rounded-full border-2 border-white/10"
-                    />
-                    {isEditing && (
-                      <button 
-                        type="button"
-                        className="absolute -bottom-1 -right-1 bg-indigo-600 hover:bg-indigo-700 text-white p-1.5 rounded-full border-2 border-[#0a0a0f] transition-colors"
-                        onClick={() => alert('Avatar upload coming soon!')}
-                      >
-                        <FaCamera className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h2 className="text-lg sm:text-xl font-bold truncate">
-                        {formData.display_name || `${formData.first_name} ${formData.last_name}`}
-                      </h2>
-                    </div>
-                    <p className="text-xs sm:text-sm muted">
-                      @{user?.username} • {formData.position || (isTeacher ? 'Teacher' : 'Student')}
-                    </p>
-                  </div>
+          {/* Status Message with Animation */}
+          <AnimatePresence>
+            {message.text && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                className={`mb-6 p-5 rounded-2xl border-2 backdrop-blur-sm ${
+                  message.type === 'success' 
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-lg shadow-emerald-500/20' :
+                  message.type === 'error' 
+                    ? 'bg-red-500/10 border-red-500/50 text-red-400 shadow-lg shadow-red-500/20' :
+                    'bg-blue-500/10 border-blue-500/50 text-blue-400 shadow-lg shadow-blue-500/20'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <motion.div
+                    animate={{ rotate: message.type === 'success' ? 360 : 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {message.type === 'success' ? <FaCheckCircle className="w-6 h-6" /> : <FaTimesCircle className="w-6 h-6" />}
+                  </motion.div>
+                  <span className="font-medium text-lg">{message.text}</span>
                 </div>
-                {!isEditing && (
-                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                    {/* Summary Button - Only on mobile/tablet */}
-                    <button
-                      type="button"
-                      onClick={() => setIsSummaryOpen(true)}
-                      className="xl:hidden bg-green-600 text-white px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap"
-                    >
-                      <FaChartLine className="inline w-4 h-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Summary</span>
-                      
-                    </button>
-                    
-                    {/* Edit Profile Button */}
-                    <button
-                      type="button"
-                      onClick={() => setIsEditing(true)}
-                      className="bg-blue-600 text-white px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap"
-                    >
-                      <FaEdit className="inline w-4 h-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Edit Profile</span>
-                      
-                    </button>
-                  </div>
-                )}
-              </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-              {/* Form Content */}
-              <form onSubmit={handleSave}>
-                <div className="p-4 sm:p-6 lg:p-8">
-                  <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
-                    {/* Left Column - Personal & Contact */}
-                    <div>
-                      {/* Personal Information */}
-                      <div className="mb-6 sm:mb-8">
-                        <h3 className="text-base sm:text-lg font-bold mb-1">
-                          <FaUser className="inline w-4 h-4 mr-2" />
-                          Personal Information
-                        </h3>
-                        <p className="text-xs sm:text-sm muted mb-4">Basic details about yourself</p>
-                        
-                        <div className="space-y-4">
-                          {/* First & Last Name */}
-                          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                            <div>
-                              <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                                First Name *
-                              </label>
-                              <input
-                                type="text"
-                                value={formData.first_name}
-                                onChange={(e) => handleChange('first_name', e.target.value)}
-                                disabled={!isEditing}
-                                required
-                                placeholder="First name"
-                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                                Last Name *
-                              </label>
-                              <input
-                                type="text"
-                                value={formData.last_name}
-                                onChange={(e) => handleChange('last_name', e.target.value)}
-                                disabled={!isEditing}
-                                required
-                                placeholder="Last name"
-                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
+          <div className="flex flex-col xl:flex-row gap-6">
+            {/* Main Profile Card */}
+            <motion.div variants={itemVariants} className="flex-1 min-w-0">
+              <div className="card-strong rounded-2xl overflow-hidden border-2 border-[var(--border-color)] shadow-xl">
+                
+                {/* Enhanced Card Header with Avatar */}
+                <div className="relative overflow-hidden">
+                  {/* Background gradient */}
+                  <div className={`absolute inset-0 bg-gradient-to-r ${getAvatarGradient()} opacity-10`} />
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                  />
+                  
+                  <div className="relative p-6 border-b-2 border-[var(--border-color)]">
+                    <div className="flex items-start gap-6 flex-wrap">
+                      {/* Enhanced Avatar */}
+                      <div className="relative group">
+                        <motion.div
+                          className="relative"
+                          variants={avatarVariants}
+                          whileHover="hover"
+                        >
+                          <div className={`w-28 h-28 rounded-3xl bg-gradient-to-br ${getAvatarGradient()} p-1 shadow-2xl`}>
+                            <div className="w-full h-full rounded-3xl bg-[var(--surface)] flex items-center justify-center overflow-hidden">
+                              <span className="text-4xl font-bold bg-gradient-to-br from-white to-white/70 bg-clip-text text-transparent">
+                                {formData.first_name?.charAt(0)}{formData.last_name?.charAt(0)}
+                              </span>
                             </div>
                           </div>
+                          
+                          {/* Edit overlay */}
+                          {isEditing && (
+                            <motion.button 
+                              type="button"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className={`absolute -bottom-2 -right-2 p-3 rounded-xl bg-gradient-to-r ${getAvatarGradient()} text-white shadow-xl border-2 border-[var(--surface)] transition-all`}
+                              onClick={() => alert('Avatar upload coming soon!')}
+                            >
+                              <FaCamera className="w-4 h-4" />
+                            </motion.button>
+                          )}
+                        </motion.div>
 
-                          {/* Display Name */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              Display Name
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.display_name}
-                              onChange={(e) => handleChange('display_name', e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="How you want to be called"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          {/* Bio */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              Bio
-                            </label>
-                            <textarea
-                              value={formData.bio}
-                              onChange={(e) => handleChange('bio', e.target.value)}
-                              disabled={!isEditing}
-                              rows="4"
-                              placeholder="Tell us about yourself..."
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg resize-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                            <p className="text-xs muted mt-1">
-                              {formData.bio?.length || 0}/500 characters
-                            </p>
-                          </div>
-                        </div>
+                        {/* Status indicator */}
+                        <motion.div 
+                          className="absolute top-0 right-0 w-6 h-6 bg-emerald-500 rounded-full border-4 border-[var(--surface)] shadow-lg"
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
                       </div>
 
-                      {/* Contact Information */}
-                      <div className="mb-6 sm:mb-8">
-                        <h3 className="text-base sm:text-lg font-bold mb-1">
-                          <FaEnvelope className="inline w-4 h-4 mr-2" />
-                          Contact & Location
-                        </h3>
-                        <p className="text-xs sm:text-sm muted mb-4">How to reach you</p>
-                        
-                        <div className="space-y-4">
-                          {/* Email */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              Email *
-                            </label>
-                            <input
-                              type="email"
-                              value={formData.email}
-                              onChange={(e) => handleChange('email', e.target.value)}
-                              disabled={!isEditing}
-                              required
-                              placeholder="your.email@example.com"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
+                      {/* User Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-4 mb-2">
+                          <div className="min-w-0 flex-1">
+                            <h2 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                              {formData.display_name || `${formData.first_name} ${formData.last_name}`}
+                            </h2>
+                            <div className="flex items-center gap-3 flex-wrap">
+                              <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--surface)] border border-[var(--border-color)] rounded-lg text-sm font-medium">
+                                @{user?.username}
+                              </span>
+                              <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold border-2 ${
+                                isTeacher 
+                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                                  : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                              }`}>
+                                {isTeacher ? <FaShieldAlt className="w-4 h-4" /> : <FaUserGraduate className="w-4 h-4" />}
+                                {formData.position || (isTeacher ? 'Teacher' : 'Student')}
+                              </span>
+                            </div>
                           </div>
 
-                          {/* Phone */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              Phone
-                            </label>
-                            <input
-                              type="tel"
-                              value={formData.phone}
-                              onChange={(e) => handleChange('phone', e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="+91 XXXXX XXXXX"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                          </div>
+                          {/* Action Buttons */}
+                          {!isEditing && (
+                            <div className="flex items-center gap-3 flex-shrink-0">
+                              <motion.button
+                                type="button"
+                                onClick={() => setIsSummaryOpen(true)}
+                                className="xl:hidden p-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold shadow-lg shadow-emerald-500/30"
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <FaChartLine className="w-5 h-5" />
+                              </motion.button>
+                              
+                              <motion.button
+                                type="button"
+                                onClick={() => setIsEditing(true)}
+                                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/30"
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <FaEdit className="w-5 h-5" />
+                                <span className="hidden sm:inline">Edit Profile</span>
+                              </motion.button>
+                            </div>
+                          )}
+                        </div>
 
-                          {/* City & Country */}
-                          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                        {formData.bio && (
+                          <p className="text-[var(--text-secondary)] text-sm leading-relaxed mt-3">
+                            {formData.bio}
+                          </p>
+                        )}
+
+                        {/* Quick Info Tags */}
+                        <div className="flex items-center gap-3 flex-wrap mt-4">
+                          {formData.city && (
+                            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-2)] border border-[var(--border-color)] rounded-lg text-sm">
+                              <FaMapMarkerAlt className="w-3 h-3 text-purple-400" />
+                              {formData.city}, {formData.country}
+                            </span>
+                          )}
+                          {formData.institute && (
+                            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-2)] border border-[var(--border-color)] rounded-lg text-sm">
+                              <FaGraduationCap className="w-3 h-3 text-blue-400" />
+                              {formData.institute}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Content */}
+                <form onSubmit={handleSave}>
+                  <div className="p-6 lg:p-8">
+                    <div className="grid lg:grid-cols-2 gap-8">
+                      {/* Left Column */}
+                      <div className="space-y-8">
+                        {/* Personal Information */}
+                        <motion.div variants={itemVariants}>
+                          <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
+                              <FaUser className="w-5 h-5 text-purple-400" />
+                            </div>
                             <div>
-                              <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                                City
+                              <h3 className="text-lg font-bold">Personal Information</h3>
+                              <p className="text-xs text-[var(--text-secondary)]">Basic details about yourself</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                  First Name *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={formData.first_name}
+                                  onChange={(e) => handleChange('first_name', e.target.value)}
+                                  disabled={!isEditing}
+                                  required
+                                  placeholder="First name"
+                                  className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-purple-500/50"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                  Last Name *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={formData.last_name}
+                                  onChange={(e) => handleChange('last_name', e.target.value)}
+                                  disabled={!isEditing}
+                                  required
+                                  placeholder="Last name"
+                                  className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-purple-500/50"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                Display Name
                               </label>
                               <input
                                 type="text"
-                                value={formData.city}
-                                onChange={(e) => handleChange('city', e.target.value)}
+                                value={formData.display_name}
+                                onChange={(e) => handleChange('display_name', e.target.value)}
                                 disabled={!isEditing}
-                                placeholder="Your city"
-                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                placeholder="How you want to be called"
+                                className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-purple-500/50"
                               />
                             </div>
+
                             <div>
-                              <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                                Country
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                Bio
+                              </label>
+                              <textarea
+                                value={formData.bio}
+                                onChange={(e) => handleChange('bio', e.target.value)}
+                                disabled={!isEditing}
+                                rows="4"
+                                placeholder="Tell us about yourself..."
+                                className="w-full px-4 py-3 rounded-xl resize-none text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-purple-500/50"
+                                maxLength={500}
+                              />
+                              <div className="flex justify-between items-center mt-2">
+                                <p className="text-xs text-[var(--text-muted)]">
+                                  {formData.bio?.length || 0}/500 characters
+                                </p>
+                                {formData.bio && formData.bio.length > 450 && (
+                                  <span className="text-xs text-amber-400">Nearly at limit!</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+
+                        {/* Contact Information */}
+                        <motion.div variants={itemVariants}>
+                          <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30">
+                              <FaEnvelope className="w-5 h-5 text-blue-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-bold">Contact & Location</h3>
+                              <p className="text-xs text-[var(--text-secondary)]">How to reach you</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                Email *
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type="email"
+                                  value={formData.email}
+                                  onChange={(e) => handleChange('email', e.target.value)}
+                                  disabled={!isEditing}
+                                  required
+                                  placeholder="your.email@example.com"
+                                  className="w-full px-4 py-3 pl-11 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-blue-500/50"
+                                />
+                                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400" />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                Phone
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type="tel"
+                                  value={formData.phone}
+                                  onChange={(e) => handleChange('phone', e.target.value)}
+                                  disabled={!isEditing}
+                                  placeholder="+91 XXXXX XXXXX"
+                                  className="w-full px-4 py-3 pl-11 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-blue-500/50"
+                                />
+                                <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-400" />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                  City
+                                </label>
+                                <input
+                                  type="text"
+                                  value={formData.city}
+                                  onChange={(e) => handleChange('city', e.target.value)}
+                                  disabled={!isEditing}
+                                  placeholder="Your city"
+                                  className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-blue-500/50"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                  Country
+                                </label>
+                                <select
+                                  value={formData.country}
+                                  onChange={(e) => handleChange('country', e.target.value)}
+                                  disabled={!isEditing}
+                                  className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-blue-500/50"
+                                >
+                                  <option value="India">India</option>
+                                  <option value="United States">United States</option>
+                                  <option value="United Kingdom">United Kingdom</option>
+                                  <option value="Canada">Canada</option>
+                                  <option value="Australia">Australia</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                <FaClock className="inline w-4 h-4 mr-2 text-purple-400" />
+                                Timezone
                               </label>
                               <select
-                                value={formData.country}
-                                onChange={(e) => handleChange('country', e.target.value)}
+                                value={formData.timezone}
+                                onChange={(e) => handleChange('timezone', e.target.value)}
                                 disabled={!isEditing}
-                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-blue-500/50"
                               >
-                                <option value="India">India</option>
-                                <option value="United States">United States</option>
-                                <option value="United Kingdom">United Kingdom</option>
-                                <option value="Canada">Canada</option>
-                                <option value="Australia">Australia</option>
+                                <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                                <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+                                <option value="Europe/London">Europe/London (GMT)</option>
+                                <option value="America/New_York">America/New York (EST)</option>
+                                <option value="America/Los_Angeles">America/Los Angeles (PST)</option>
+                                <option value="UTC">UTC</option>
                               </select>
                             </div>
                           </div>
-
-                          {/* Timezone */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              <FaClock className="inline w-3 h-3 mr-1" />
-                              Timezone
-                            </label>
-                            <select
-                              value={formData.timezone}
-                              onChange={(e) => handleChange('timezone', e.target.value)}
-                              disabled={!isEditing}
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-                              <option value="Asia/Dubai">Asia/Dubai (GST)</option>
-                              <option value="Europe/London">Europe/London (GMT)</option>
-                              <option value="America/New_York">America/New York (EST)</option>
-                              <option value="America/Los_Angeles">America/Los Angeles (PST)</option>
-                              <option value="UTC">UTC</option>
-                            </select>
-                          </div>
-                        </div>
+                        </motion.div>
                       </div>
-                    </div>
 
-                    {/* Right Column - Education & Social */}
-                    <div>
-                      {/* Educational Information */}
-                      <div className="mb-6 sm:mb-8">
-                        <h3 className="text-base sm:text-lg font-bold mb-1">
-                          <FaGraduationCap className="inline w-4 h-4 mr-2" />
-                          Educational Information
-                        </h3>
-                        <p className="text-xs sm:text-sm muted mb-4">Academic details</p>
-                        
-                        <div className="space-y-4">
-                          {/* Roll Number & Position */}
-                          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                            <div>
-                              <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                                Roll Number
-                              </label>
-                              <input
-                                type="text"
-                                value={formData.roll_number}
-                                onChange={(e) => handleChange('roll_number', e.target.value)}
-                                disabled={!isEditing}
-                                placeholder="Roll no."
-                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
+                      {/* Right Column */}
+                      <div className="space-y-8">
+                        {/* Educational Information */}
+                        <motion.div variants={itemVariants}>
+                          <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30">
+                              <FaGraduationCap className="w-5 h-5 text-emerald-400" />
                             </div>
                             <div>
-                              <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                                Position
-                              </label>
-                              <input
-                                type="text"
-                                value={formData.position}
-                                onChange={(e) => handleChange('position', e.target.value)}
-                                disabled={!isEditing}
-                                placeholder="e.g., Student"
-                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
+                              <h3 className="text-lg font-bold">Educational Information</h3>
+                              <p className="text-xs text-[var(--text-secondary)]">Academic details</p>
                             </div>
                           </div>
-
-                          {/* Institute */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              Institute
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.institute}
-                              onChange={(e) => handleChange('institute', e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="Enter institute name"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          {/* Department */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              Department
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.department}
-                              onChange={(e) => handleChange('department', e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="e.g., Computer Science"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          {/* Skills */}
-                          <div className="pt-4 border-t border-[var(--border-color)]">
-                            <div className="flex justify-between items-center mb-3">
-                              <label className="text-xs sm:text-sm font-semibold soft">
-                                Skills
-                              </label>
-                              <span className="text-xs muted">{skills.length} skills</span>
-                            </div>
-                            
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {skills.map((skill, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/30 rounded-full text-sm text-blue-300"
-                                >
-                                  <span>{skill}</span>
-                                  {isEditing && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveSkill(skill)}
-                                      className="hover:text-red-400 transition-colors"
-                                    >
-                                      <FaTimes className="w-3 h-3" />
-                                    </button>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-
-                            {isEditing && (
-                              <div className="flex gap-2">
+                          
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                  Roll Number
+                                </label>
                                 <input
                                   type="text"
-                                  value={newSkill}
-                                  onChange={(e) => setNewSkill(e.target.value)}
-                                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
-                                  placeholder="Add a skill..."
-                                  className="flex-1 px-3 sm:px-4 py-2 rounded-lg text-sm"
+                                  value={formData.roll_number}
+                                  onChange={(e) => handleChange('roll_number', e.target.value)}
+                                  disabled={!isEditing}
+                                  placeholder="Roll no."
+                                  className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-emerald-500/50"
                                 />
-                                <button
-                                  type="button"
-                                  onClick={handleAddSkill}
-                                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                                >
-                                  <FaPlus className="w-4 h-4" />
-                                </button>
                               </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                              <div>
+                                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                  Position
+                                </label>
+                                <input
+                                  type="text"
+                                  value={formData.position}
+                                  onChange={(e) => handleChange('position', e.target.value)}
+                                  disabled={!isEditing}
+                                  placeholder="e.g., Student"
+                                  className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-emerald-500/50"
+                                />
+                              </div>
+                            </div>
 
-                      {/* Social Links */}
-                      <div>
-                        <h3 className="text-base sm:text-lg font-bold mb-1">
-                          <FaGlobe className="inline w-4 h-4 mr-2" />
-                          Social Links
-                        </h3>
-                        <p className="text-xs sm:text-sm muted mb-4">Connect your social profiles</p>
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                Institute
+                              </label>
+                              <input
+                                type="text"
+                                value={formData.institute}
+                                onChange={(e) => handleChange('institute', e.target.value)}
+                                disabled={!isEditing}
+                                placeholder="Enter institute name"
+                                className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-emerald-500/50"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                Department
+                              </label>
+                              <input
+                                type="text"
+                                value={formData.department}
+                                onChange={(e) => handleChange('department', e.target.value)}
+                                disabled={!isEditing}
+                                placeholder="e.g., Computer Science"
+                                className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-emerald-500/50"
+                              />
+                            </div>
+
+                            {/* Enhanced Skills Section */}
+                            <div className="pt-4 border-t-2 border-[var(--border-color)]">
+                              <div className="flex justify-between items-center mb-4">
+                                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--text-secondary)]">
+                                  <FaCode className="w-4 h-4 text-cyan-400" />
+                                  Skills & Technologies
+                                </label>
+                                <motion.span 
+                                  className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-xs font-bold text-cyan-400"
+                                  animate={{ scale: [1, 1.1, 1] }}
+                                  transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                  {skills.length} skills
+                                </motion.span>
+                              </div>
+                              
+                              <motion.div 
+                                className="flex flex-wrap gap-2 mb-4"
+                                variants={containerVariants}
+                                initial="hidden"
+                                animate="visible"
+                              >
+                                <AnimatePresence mode="popLayout">
+                                  {skills.map((skill, index) => (
+                                    <motion.div
+                                      key={skill}
+                                      variants={skillBadgeVariants}
+                                      initial="hidden"
+                                      animate="visible"
+                                      exit={{ scale: 0, opacity: 0 }}
+                                      whileHover="hover"
+                                      layout
+                                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-2 border-cyan-500/30 rounded-xl text-sm font-medium text-cyan-400 shadow-lg shadow-cyan-500/10"
+                                    >
+                                      <span>{skill}</span>
+                                      {isEditing && (
+                                        <motion.button
+                                          type="button"
+                                          onClick={() => handleRemoveSkill(skill)}
+                                          className="hover:text-red-400 transition-colors p-1"
+                                          whileHover={{ scale: 1.2, rotate: 90 }}
+                                          whileTap={{ scale: 0.9 }}
+                                        >
+                                          <FaTimes className="w-3 h-3" />
+                                        </motion.button>
+                                      )}
+                                    </motion.div>
+                                  ))}
+                                </AnimatePresence>
+                              </motion.div>
+
+                              {isEditing && (
+                                <motion.div 
+                                  className="flex gap-2"
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                >
+                                  <input
+                                    type="text"
+                                    value={newSkill}
+                                    onChange={(e) => setNewSkill(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
+                                    placeholder="Add a skill..."
+                                    className="flex-1 px-4 py-3 rounded-xl text-sm border-2 focus:border-cyan-500/50 transition-all"
+                                  />
+                                  <motion.button
+                                    type="button"
+                                    onClick={handleAddSkill}
+                                    className="px-5 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-xl transition-all shadow-lg shadow-cyan-500/30"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                  >
+                                    <FaPlus className="w-5 h-5" />
+                                  </motion.button>
+                                </motion.div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+
+                        {/* Social Links */}
+                        <motion.div variants={itemVariants}>
+                          <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 border border-pink-500/30">
+                              <FaGlobe className="w-5 h-5 text-pink-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-bold">Social Links</h3>
+                              <p className="text-xs text-[var(--text-secondary)]">Connect your social profiles</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                <FaLinkedin className="inline w-4 h-4 mr-2 text-blue-400" />
+                                LinkedIn Profile
+                              </label>
+                              <input
+                                type="url"
+                                value={formData.linkedin}
+                                onChange={(e) => handleChange('linkedin', e.target.value)}
+                                disabled={!isEditing}
+                                placeholder="https://www.linkedin.com/in/your-profile"
+                                className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-blue-500/50"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                                <FaGithub className="inline w-4 h-4 mr-2 text-gray-400" />
+                                GitHub Profile
+                              </label>
+                              <input
+                                type="url"
+                                value={formData.github}
+                                onChange={(e) => handleChange('github', e.target.value)}
+                                disabled={!isEditing}
+                                placeholder="https://github.com/your-username"
+                                className="w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 focus:border-gray-500/50"
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    {isEditing && (
+                      <motion.div 
+                        className="flex justify-between gap-4 mt-8 pt-6 border-t-2 border-[var(--border-color)]"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <motion.button
+                          type="button"
+                          onClick={handleCancel}
+                          disabled={isSaving}
+                          className="flex-1 sm:flex-initial px-8 py-4 border-2 border-[var(--border-color)] rounded-xl font-semibold hover:bg-[var(--surface-2)] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <FaTimes className="w-5 h-5" />
+                          <span>Cancel</span>
+                        </motion.button>
                         
-                        <div className="space-y-4">
-                          {/* LinkedIn */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              <FaLinkedin className="inline w-4 h-4 mr-1 text-blue-400" />
-                              LinkedIn Profile
-                            </label>
-                            <input
-                              type="url"
-                              value={formData.linkedin}
-                              onChange={(e) => handleChange('linkedin', e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="https://www.linkedin.com/in/your-profile"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                          </div>
+                        <motion.button
+                          type="submit"
+                          disabled={isSaving}
+                          className="flex-1 sm:flex-initial px-10 py-4 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-white rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/30"
+                          whileHover={{ scale: 1.02, y: -2 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {isSaving ? (
+                            <>
+                              <motion.div 
+                                className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              />
+                              <span>Saving...</span>
+                            </>
+                          ) : (
+                            <>
+                              <FaSave className="w-5 h-5" />
+                              <span>Save Changes</span>
+                            </>
+                          )}
+                        </motion.button>
+                      </motion.div>
+                    )}
+                  </div>
+                </form>
+              </div>
+            </motion.div>
 
-                          {/* GitHub */}
-                          <div>
-                            <label className="block text-xs sm:text-sm font-semibold soft mb-2">
-                              <FaGithub className="inline w-4 h-4 mr-1 text-gray-400" />
-                              GitHub Profile
-                            </label>
-                            <input
-                              type="url"
-                              value={formData.github}
-                              onChange={(e) => handleChange('github', e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="https://github.com/your-username"
-                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                          </div>
-                        </div>
-                      </div>
+            {/* Enhanced Profile Summary Sidebar - Desktop */}
+            <motion.aside 
+              variants={itemVariants}
+              className="hidden xl:block w-96 flex-shrink-0"
+            >
+              <div className="sticky top-24 space-y-5">
+                {/* Profile Completeness Card */}
+                <motion.div
+                  className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 border-2 border-purple-500/30 shadow-xl backdrop-blur-sm"
+                  variants={statCardVariants}
+                  whileHover="hover"
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
+                      <FaChartLine className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold">Profile Summary</h3>
+                      <p className="text-xs text-[var(--text-secondary)]">Your profile overview</p>
                     </div>
                   </div>
 
-                  {/* Bottom Action Buttons */}
-                  {isEditing && (
-                    <div className="flex justify-between gap-3 mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/10">
-                      <button
-                        type="button"
-                        onClick={handleCancel}
-                        disabled={isSaving}
-                        className="border border-white/10 px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-medium hover:bg-white/5 active:scale-95 transition flex items-center justify-center gap-2 text-sm flex-1 sm:flex-initial disabled:opacity-50 disabled:cursor-not-allowed"
+                  <div className="mb-5">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-sm font-semibold text-[var(--text-secondary)]">Completeness</span>
+                      <motion.span 
+                        className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
                       >
-                        <FaTimes className="w-4 h-4" />
-                        <span className="hidden sm:inline">Cancel</span>
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSaving}
-                        className="bg-blue-600 text-white px-5 sm:px-8 py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition text-sm flex-1 sm:flex-initial disabled:opacity-50 flex items-center justify-center gap-2"
-                      >
-                        {isSaving ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            <span>Saving...</span>
-                          </>
-                        ) : (
-                          <>
-                            <FaSave className="w-4 h-4" />
-                            <span>Save Changes</span>
-                          </>
-                        )}
-                      </button>
+                        {completeness}%
+                      </motion.span>
                     </div>
-                  )}
-                </div>
-              </form>
-            </div>
-
-            {/* Profile Summary Card - Desktop Sticky */}
-            <div className="hidden xl:block xl:w-80 2xl:w-96">
-              <div className="card-strong p-4 sm:p-6 rounded-xl sm:rounded-2xl sticky top-6">
-                <div className="mb-4">
-                  <h3 className="text-base sm:text-lg font-bold mb-1">Profile Summary</h3>
-                  <p className="text-xs sm:text-sm muted">Your profile overview</p>
-                </div>
-
-                {/* Profile Completeness */}
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">Completeness</span>
-                    <span className="text-sm font-semibold">{completeness}%</span>
+                    <div className="relative w-full h-4 bg-[var(--surface)] rounded-full overflow-hidden border-2 border-[var(--border-color)] shadow-inner">
+                      <motion.div 
+                        className={`absolute top-0 left-0 h-full rounded-full ${
+                          completeness >= 80 ? 'bg-gradient-to-r from-emerald-500 to-green-500' :
+                          completeness >= 50 ? 'bg-gradient-to-r from-amber-500 to-yellow-500' :
+                          'bg-gradient-to-r from-red-500 to-rose-500'
+                        }`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${completeness}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                      />
+                      <motion.div
+                        className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        animate={{ x: ['-100%', '200%'] }}
+                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                      />
+                    </div>
+                    <p className="text-xs text-[var(--text-secondary)] mt-3 flex items-center gap-2">
+                      {completeness >= 80 ? (
+                        <><FaTrophy className="text-amber-400" /> Great! Your profile is complete</>
+                      ) : completeness >= 50 ? (
+                        <><FaStar className="text-amber-400" /> Good progress! Add more details</>
+                      ) : (
+                        <><FaFire className="text-red-400" /> Let's complete your profile</>
+                      )}
+                    </p>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        completeness >= 80 ? 'bg-green-500' :
-                        completeness >= 50 ? 'bg-yellow-500' :
-                        'bg-red-500'
-                      }`}
-                      style={{ width: `${completeness}%` }}
-                    />
-                  </div>
-                  <p className="text-xs muted mt-2">
-                    {completeness >= 80 ? '🎉 Great! Your profile is looking complete' :
-                     completeness >= 50 ? '👍 Good progress! Add more details' :
-                     '📝 Let\'s complete your profile'}
-                  </p>
-                </div>
+                </motion.div>
 
                 {/* Quick Stats */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold">{isTeacher ? (profileData?.teacher_courses_count || 0) : (profileData?.student_enrolled_count || 0)}</div>
-                    <div className="text-xs muted">{isTeacher ? 'Courses' : 'Enrolled'}</div>
-                  </div>
-                  <div className="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold">{isTeacher ? (profileData?.teacher_students_count || 0) : (profileData?.student_completed_count || 0)}</div>
-                    <div className="text-xs muted">{isTeacher ? 'Students' : 'Completed'}</div>
-                  </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <motion.div
+                    className="p-5 rounded-2xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-2 border-blue-500/30 shadow-xl"
+                    variants={statCardVariants}
+                    whileHover="hover"
+                  >
+                    <motion.div
+                      className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      {isTeacher ? (profileData?.teacher_courses_count || 0) : (profileData?.student_enrolled_count || 0)}
+                    </motion.div>
+                    <div className="text-xs font-semibold text-[var(--text-secondary)]">
+                      {isTeacher ? 'Courses' : 'Enrolled'}
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-2 border-emerald-500/30 shadow-xl"
+                    variants={statCardVariants}
+                    whileHover="hover"
+                  >
+                    <motion.div
+                      className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-2"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      {isTeacher ? (profileData?.teacher_students_count || 0) : (profileData?.student_completed_count || 0)}
+                    </motion.div>
+                    <div className="text-xs font-semibold text-[var(--text-secondary)]">
+                      {isTeacher ? 'Students' : 'Completed'}
+                    </div>
+                  </motion.div>
                 </div>
 
-                {/* Account Info */}
-                <div className="pt-6 border-t border-[var(--border-color)] space-y-3">
-                  <h4 className="text-sm font-semibold mb-3">Account Information</h4>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="muted">Username</span>
-                    <span className="font-medium">@{user?.username}</span>
+                {/* Account Info Card */}
+                <motion.div
+                  className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-2 border-amber-500/30 shadow-xl backdrop-blur-sm"
+                  variants={statCardVariants}
+                  whileHover="hover"
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="p-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500">
+                      <FaUser className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="text-lg font-bold">Account Info</h4>
                   </div>
                   
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="muted">Role</span>
-                    <span className="font-medium">{isTeacher ? 'Teacher' : 'Student'}</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-[var(--surface)] rounded-xl">
+                      <span className="text-sm text-[var(--text-secondary)]">Username</span>
+                      <span className="text-sm font-bold">@{user?.username}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-[var(--surface)] rounded-xl">
+                      <span className="text-sm text-[var(--text-secondary)]">Role</span>
+                      <span className={`text-sm font-bold ${isTeacher ? 'text-emerald-400' : 'text-blue-400'}`}>
+                        {isTeacher ? 'Teacher' : 'Student'}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-[var(--surface)] rounded-xl">
+                      <span className="text-sm text-[var(--text-secondary)]">Location</span>
+                      <span className="text-sm font-bold text-right flex-1 ml-2 truncate">
+                        {formData.city ? `${formData.city}, ${formData.country}` : 'Not set'}
+                      </span>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="muted">Location</span>
-                    <span className="font-medium">
-                      {formData.city ? `${formData.city}, ${formData.country}` : 'Not set'}
-                    </span>
-                  </div>
-                </div>
+                </motion.div>
 
                 {/* Social Links Summary */}
                 {(formData.linkedin || formData.github) && (
-                  <div className="pt-6 border-t border-[var(--border-color)] mt-6">
-                    <h4 className="text-sm font-semibold mb-3">Social Profiles</h4>
-                    <div className="space-y-2">
+                  <motion.div
+                    className="p-6 rounded-2xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 border-2 border-pink-500/30 shadow-xl"
+                    variants={statCardVariants}
+                    whileHover="hover"
+                  >
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="p-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500">
+                        <FaGlobe className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="text-lg font-bold">Social Profiles</h4>
+                    </div>
+                    <div className="space-y-3">
                       {formData.linkedin && (
-                        <a 
+                        <motion.a 
                           href={formData.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-colors group"
+                          className="flex items-center gap-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border-2 border-blue-500/30 rounded-xl transition-all group"
+                          whileHover={{ scale: 1.02, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          <FaLinkedin className="w-5 h-5 text-blue-400" />
-                          <span className="text-sm group-hover:text-white transition-colors">LinkedIn</span>
-                        </a>
+                          <FaLinkedin className="w-6 h-6 text-blue-400" />
+                          <span className="text-sm font-semibold group-hover:text-blue-400 transition-colors">LinkedIn</span>
+                        </motion.a>
                       )}
                       {formData.github && (
-                        <a 
+                        <motion.a 
                           href={formData.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-2 bg-gray-500/10 hover:bg-gray-500/20 border border-gray-500/20 rounded-lg transition-colors group"
+                          className="flex items-center gap-3 p-4 bg-gray-500/10 hover:bg-gray-500/20 border-2 border-gray-500/30 rounded-xl transition-all group"
+                          whileHover={{ scale: 1.02, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          <FaGithub className="w-5 h-5 text-gray-400" />
-                          <span className="text-sm group-hover:text-white transition-colors">GitHub</span>
-                        </a>
+                          <FaGithub className="w-6 h-6 text-gray-400" />
+                          <span className="text-sm font-semibold group-hover:text-gray-300 transition-colors">GitHub</span>
+                        </motion.a>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
-            </div>
+            </motion.aside>
           </div>
-        </div>
+        </motion.div>
       </main>
 
-      {/* Mobile/Tablet Sliding Drawer */}
-      {isSummaryOpen && (
-        <>
-          {/* Backdrop */}
-          <div 
-            className="xl:hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 transition-opacity"
-            onClick={() => setIsSummaryOpen(false)}
-          />
-          
-          {/* Drawer */}
-          <div className={`xl:hidden fixed right-0 top-0 bottom-0 w-full max-w-md bg-[var(--card-bg)] shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
-            isSummaryOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}>
-            <div className="h-full overflow-y-auto">
-              {/* Drawer Header */}
-              <div className="sticky top-0 bg-[var(--card-bg)] border-b border-[var(--border-color)] p-4 flex items-center justify-between z-10">
+      {/* Mobile Summary Drawer */}
+      <AnimatePresence>
+        {isSummaryOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="xl:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+              onClick={() => setIsSummaryOpen(false)}
+            />
+            
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="xl:hidden fixed right-0 top-0 bottom-0 w-full max-w-md bg-[var(--surface)] shadow-2xl z-50 overflow-y-auto"
+            >
+              <div className="sticky top-0 bg-[var(--surface)] border-b-2 border-[var(--border-color)] p-5 flex items-center justify-between z-10 backdrop-blur-sm">
                 <div>
-                  <h3 className="text-lg font-bold">Profile Summary</h3>
-                  <p className="text-xs muted">Your profile overview</p>
+                  <h3 className="text-xl font-bold">Profile Summary</h3>
+                  <p className="text-sm text-[var(--text-secondary)]">Your profile overview</p>
                 </div>
-                <button
+                <motion.button
                   onClick={() => setIsSummaryOpen(false)}
-                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                  className="p-3 hover:bg-[var(--surface-2)] rounded-xl transition-colors"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
                 >
-                  <FaTimes className="w-5 h-5" />
-                </button>
+                  <FaTimes className="w-6 h-6" />
+                </motion.button>
               </div>
 
-              {/* Drawer Content */}
-              <div className="p-4">
+              <div className="p-5 space-y-5">
+                {/* All the same cards as desktop but in mobile drawer */}
                 {/* Profile Completeness */}
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">Completeness</span>
-                    <span className="text-sm font-semibold">{completeness}%</span>
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 border-2 border-purple-500/30 shadow-xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <FaChartLine className="w-6 h-6 text-purple-400" />
+                    <h4 className="text-lg font-bold">Completeness</h4>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        completeness >= 80 ? 'bg-green-500' :
-                        completeness >= 50 ? 'bg-yellow-500' :
-                        'bg-red-500'
-                      }`}
-                      style={{ width: `${completeness}%` }}
-                    />
+                  <div className="mb-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Progress</span>
+                      <span className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        {completeness}%
+                      </span>
+                    </div>
+                    <div className="w-full h-3 bg-[var(--surface-2)] rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          completeness >= 80 ? 'bg-gradient-to-r from-emerald-500 to-green-500' :
+                          completeness >= 50 ? 'bg-gradient-to-r from-amber-500 to-yellow-500' :
+                          'bg-gradient-to-r from-red-500 to-rose-500'
+                        }`}
+                        style={{ width: `${completeness}%` }}
+                      />
+                    </div>
                   </div>
-                  <p className="text-xs muted mt-2">
-                    {completeness >= 80 ? '🎉 Great! Your profile is looking complete' :
-                     completeness >= 50 ? '👍 Good progress! Add more details' :
-                     '📝 Let\'s complete your profile'}
-                  </p>
                 </div>
 
                 {/* Quick Stats */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold">{isTeacher ? (profileData?.teacher_courses_count || 0) : (profileData?.student_enrolled_count || 0)}</div>
-                    <div className="text-xs muted">{isTeacher ? 'Courses' : 'Enrolled'}</div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-5 rounded-2xl bg-blue-500/10 border-2 border-blue-500/30 text-center">
+                    <div className="text-3xl font-bold text-blue-400 mb-1">
+                      {isTeacher ? (profileData?.teacher_courses_count || 0) : (profileData?.student_enrolled_count || 0)}
+                    </div>
+                    <div className="text-xs font-semibold text-[var(--text-secondary)]">
+                      {isTeacher ? 'Courses' : 'Enrolled'}
+                    </div>
                   </div>
-                  <div className="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold">{isTeacher ? (profileData?.teacher_students_count || 0) : (profileData?.student_completed_count || 0)}</div>
-                    <div className="text-xs muted">{isTeacher ? 'Students' : 'Completed'}</div>
+                  <div className="p-5 rounded-2xl bg-emerald-500/10 border-2 border-emerald-500/30 text-center">
+                    <div className="text-3xl font-bold text-emerald-400 mb-1">
+                      {isTeacher ? (profileData?.teacher_students_count || 0) : (profileData?.student_completed_count || 0)}
+                    </div>
+                    <div className="text-xs font-semibold text-[var(--text-secondary)]">
+                      {isTeacher ? 'Students' : 'Completed'}
+                    </div>
                   </div>
                 </div>
 
                 {/* Account Info */}
-                <div className="pt-6 border-t border-[var(--border-color)] space-y-3">
-                  <h4 className="text-sm font-semibold mb-3">Account Information</h4>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="muted">Username</span>
-                    <span className="font-medium">@{user?.username}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="muted">Role</span>
-                    <span className="font-medium">{isTeacher ? 'Teacher' : 'Student'}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="muted">Location</span>
-                    <span className="font-medium">
-                      {formData.city ? `${formData.city}, ${formData.country}` : 'Not set'}
-                    </span>
+                <div className="p-5 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30">
+                  <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <FaUser className="w-5 h-5 text-amber-400" />
+                    Account Info
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 bg-[var(--surface-2)] rounded-xl">
+                      <span className="text-sm text-[var(--text-secondary)]">Username</span>
+                      <span className="text-sm font-bold">@{user?.username}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-[var(--surface-2)] rounded-xl">
+                      <span className="text-sm text-[var(--text-secondary)]">Role</span>
+                      <span className={`text-sm font-bold ${isTeacher ? 'text-emerald-400' : 'text-blue-400'}`}>
+                        {isTeacher ? 'Teacher' : 'Student'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-[var(--surface-2)] rounded-xl">
+                      <span className="text-sm text-[var(--text-secondary)]">Location</span>
+                      <span className="text-sm font-bold truncate ml-2">
+                        {formData.city ? `${formData.city}, ${formData.country}` : 'Not set'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Social Links Summary */}
+                {/* Social Links */}
                 {(formData.linkedin || formData.github) && (
-                  <div className="pt-6 border-t border-[var(--border-color)] mt-6">
-                    <h4 className="text-sm font-semibold mb-3">Social Profiles</h4>
-                    <div className="space-y-2">
+                  <div className="p-5 rounded-2xl bg-pink-500/10 border-2 border-pink-500/30">
+                    <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <FaGlobe className="w-5 h-5 text-pink-400" />
+                      Social Profiles
+                    </h4>
+                    <div className="space-y-3">
                       {formData.linkedin && (
                         <a 
                           href={formData.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-colors group"
+                          className="flex items-center gap-3 p-4 bg-blue-500/10 border-2 border-blue-500/30 rounded-xl"
                         >
-                          <FaLinkedin className="w-5 h-5 text-blue-400" />
-                          <span className="text-sm group-hover:text-white transition-colors">LinkedIn</span>
+                          <FaLinkedin className="w-6 h-6 text-blue-400" />
+                          <span className="text-sm font-semibold">LinkedIn</span>
                         </a>
                       )}
                       {formData.github && (
@@ -941,20 +1352,20 @@ const Profile = () => {
                           href={formData.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-2 bg-gray-500/10 hover:bg-gray-500/20 border border-gray-500/20 rounded-lg transition-colors group"
+                          className="flex items-center gap-3 p-4 bg-gray-500/10 border-2 border-gray-500/30 rounded-xl"
                         >
-                          <FaGithub className="w-5 h-5 text-gray-400" />
-                          <span className="text-sm group-hover:text-white transition-colors">GitHub</span>
+                          <FaGithub className="w-6 h-6 text-gray-400" />
+                          <span className="text-sm font-semibold">GitHub</span>
                         </a>
                       )}
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-        </>
-      )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
