@@ -29,6 +29,9 @@ import Sidebar from '../components/layout/Sidebar';
 import TeacherSidebar from '../components/layout/TeacherSidebar';
 import { useAuthStore } from '../store/authStore';
 import { useNotificationsStore } from '../store/notificationsStore';
+import { getModeratorStatus } from '../api/api';
+
+
 
 // Enhanced Animation variants
 const containerVariants = {
@@ -114,24 +117,34 @@ const Notifications = () => {
     markBulkAsRead
   } = useNotificationsStore();
 
-  const isTeacher = user?.is_moderator || false;
+  const [isModeratorActive, setIsModeratorActive] = useState(false);
+  const isTeacher = user?.is_moderator && isModeratorActive;
 
   useEffect(() => {
-    const loadNotifications = async () => {
+    const loadData = async () => {
       setLoading(true);
       try {
+        // Fetch notifications
         await fetchNotifications();
+        
+        // Fetch current moderator toggle state if user is a moderator
+        if (user?.is_moderator) {
+          const status = await getModeratorStatus();
+          setIsModeratorActive(status.is_moderator_active);
+        }
       } catch (error) {
-        console.error('Failed to load notifications:', error);
+        console.error('Failed to load data:', error);
       } finally {
         setLoading(false);
       }
     };
 
     if (isAuthenticated) {
-      loadNotifications();
+      loadData();
     }
-  }, [isAuthenticated, fetchNotifications]);
+  }, [isAuthenticated, fetchNotifications, user]); // Add user to dependency array
+
+
 
   const filteredNotifications = notifications.filter(notif => {
     if (filter === 'unread' && notif.read) return false;
